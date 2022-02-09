@@ -88,7 +88,7 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    */
   public void add(T value) {
     if (value != null) {
-      getValidityVector().set(getValueCount());
+      validityVector.set(valueCount);
     } else {
       nullCount++;
     }
