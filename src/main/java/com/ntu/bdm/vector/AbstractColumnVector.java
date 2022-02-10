@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
+public abstract class AbstractColumnVector<T>{
 
   private int valueCount;
   private int nullCount;
@@ -23,7 +23,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    *
    * @return number of values in the vector
    */
-  @Override
   public int getValueCount() {
     return valueCount;
   }
@@ -33,7 +32,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    *
    * @return number of null elements
    */
-  @Override
   public int getNullCount() {
     return nullCount;
   }
@@ -44,7 +42,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    * @param index position of element
    * @return element at given index
    */
-  @Override
   public T get(int index) {
     return dataVector.get(index);
   }
@@ -55,7 +52,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    * @param index index to check for null
    * @return true if element is null
    */
-  @Override
   public boolean isNull(int index) {
     return !validityVector.get(index);
   }
@@ -65,7 +61,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    *
    * @return vector of bits tracking which elements in the vector are null
    */
-  @Override
   public BitSet getValidityVector() {
     return validityVector;
   }
@@ -75,7 +70,6 @@ public abstract class AbstractColumnVector<T> implements ColumnVector<T> {
    *
    * @return vector of data
    */
-  @Override
   public List<T> getDataVector() {
     return dataVector;
   }
