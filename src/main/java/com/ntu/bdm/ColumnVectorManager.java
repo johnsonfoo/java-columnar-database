@@ -20,26 +20,24 @@ public class ColumnVectorManager {
     categoricalColumnVectors.put(name, new CategoricalColumnVector<String>());
   }
 
-  public void createColumnVector(Class<?> cls, String fieldName) {
-    if (cls == Double.class) {
-      doubleColumnVectors.put(fieldName, new ColumnVector<Double>());
-    }
-    if (cls == String.class) {
-      stringColumnVectors.put(fieldName, new ColumnVector<String>());
-    }
+  public void createDoubleColumnVector(String fieldName) {
+    doubleColumnVectors.put(fieldName, new ColumnVector<Double>());
+  }
+
+  public void createStringColumnVector(String fieldName) {
+    stringColumnVectors.put(fieldName, new ColumnVector<String>());
   }
 
   public void addToCategoricalColumnVector(String fieldName, String value) {
     categoricalColumnVectors.get(fieldName).add(value);
   }
 
-  public <T> void addToColumnVector(String fieldName, T value) {
-    if (doubleColumnVectors.containsKey(fieldName)) {
-      doubleColumnVectors.get(fieldName).add((Double) value);
-    }
-    if (stringColumnVectors.containsKey(fieldName)) {
-      stringColumnVectors.get(fieldName).add((String) value);
-    }
+  public void addToDoubleColumnVector(String fieldName, Double value) {
+    doubleColumnVectors.get(fieldName).add(value);
+  }
+
+  public void addToStringColumnVector(String fieldName, String value) {
+    stringColumnVectors.get(fieldName).add(value);
   }
 
   public HashMap<String, CategoricalColumnVector<String>> getCategoricalColumnVectors() {
