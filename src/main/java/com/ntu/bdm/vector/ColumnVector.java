@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-public abstract class AbstractColumnVector<T>{
+public class ColumnVector<T>{
 
   private int valueCount;
   private int nullCount;
   private BitSet validityVector;
   private List<T> dataVector;
 
-  public AbstractColumnVector() {
+  public ColumnVector() {
     valueCount = 0;
     nullCount = 0;
     validityVector = new BitSet();
