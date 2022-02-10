@@ -16,8 +16,8 @@ public class ColumnVectorManager {
     stringColumnVectors = new HashMap<>();
   }
 
-  public void createCategoricalColumnVector(String name) {
-    categoricalColumnVectors.put(name, new CategoricalColumnVector<String>());
+  public void createCategoricalColumnVector(String fieldName) {
+    categoricalColumnVectors.put(fieldName, new CategoricalColumnVector<String>());
   }
 
   public void createDoubleColumnVector(String fieldName) {
