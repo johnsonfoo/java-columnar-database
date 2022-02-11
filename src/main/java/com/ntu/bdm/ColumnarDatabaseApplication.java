@@ -8,5 +8,20 @@ public class ColumnarDatabaseApplication {
     csvFileManager.print();
     csvFileManager.clear();
     csvFileManager.print();
+
+    ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
+  }
+
+  public static ColumnVectorManager createColumnVectorsFromCsv() {
+    ColumnVectorManager columnVectorManager = new ColumnVectorManager();
+
+    columnVectorManager.createCategoricalColumnVector("Year");
+    columnVectorManager.createCategoricalColumnVector("Month");
+    columnVectorManager.createStringColumnVector("Timestamp");
+    columnVectorManager.createCategoricalColumnVector("Station");
+    columnVectorManager.createDoubleColumnVector("Temperature");
+    columnVectorManager.createDoubleColumnVector("Humidity");
+
+    return columnVectorManager;
   }
 }
