@@ -2,6 +2,7 @@ package com.ntu.bdm;
 
 import com.ntu.bdm.index.CategoricalColumnIndex;
 import com.ntu.bdm.vector.CategoricalColumnVector;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +31,9 @@ public class ColumnIndexManager {
 
   public Map<String, CategoricalColumnIndex<String>> getCategoricalColumnIndexes() {
     return categoricalColumnIndexes;
+  }
+
+  public BitSet findBitmapByFieldNameAndCategory(String fieldName, String category) {
+    return categoricalColumnIndexes.get(fieldName).getBitmapIndex().get(category);
   }
 }
