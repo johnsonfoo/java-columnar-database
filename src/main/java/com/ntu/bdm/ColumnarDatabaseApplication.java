@@ -11,6 +11,8 @@ public class ColumnarDatabaseApplication {
 
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
     populateColumnVectorsFromCsv(csvFileManager, columnVectorManager);
+    ColumnIndexManager columnIndexManager = new ColumnIndexManager();
+    createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
   }
 
   public static ColumnVectorManager createColumnVectorsFromCsv() {
@@ -51,5 +53,11 @@ public class ColumnarDatabaseApplication {
       Double humidity = humidityString.equals("M") ? null : Double.valueOf(humidityString);
       columnVectorManager.addToDoubleColumnVector("Humidity", humidity);
     }
+  }
+
+  private static void createCategoricalColumnIndexes(ColumnVectorManager columnVectorManager,
+      ColumnIndexManager columnIndexManager) {
+    columnIndexManager.constructCategoricalColumnIndexes(
+        columnVectorManager.getCategoricalColumnVectors());
   }
 }
