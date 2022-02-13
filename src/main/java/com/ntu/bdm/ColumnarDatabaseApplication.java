@@ -22,9 +22,13 @@ public class ColumnarDatabaseApplication {
         List<Integer> positionList = findByStationAndYearAndMonth(columnIndexManager, "Paya Lebar",
             year, String.valueOf(month));
 
+        List<Integer> maximumTemperatureList = getMaximumPositionList(positionList,
+            columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
         List<Integer> minimumTemperatureList = getMinimumPositionList(positionList,
             columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
 
+        List<Integer> maximumHumidityList = getMaximumPositionList(positionList,
+            columnVectorManager.getDoubleColumnVectors().get("Humidity").getDataVector());
         List<Integer> minimumHumidityList = getMinimumPositionList(positionList,
             columnVectorManager.getDoubleColumnVectors().get("Humidity").getDataVector());
       }
@@ -121,5 +125,30 @@ public class ColumnarDatabaseApplication {
     }
 
     return minimumPositionList;
+  }
+
+  // TODO: Combine logic with getMinimumPositionList to return minimumPositionList and maximumPositionList
+  public static List<Integer> getMaximumPositionList(List<Integer> positionList,
+      List<Double> dataVector) {
+    List<Integer> maximumPositionList = new ArrayList<>();
+
+    if (positionList.size() == 0) {
+      return maximumPositionList;
+    }
+
+    Double maximum = dataVector.get(positionList.get(0));
+
+    for (Integer position : positionList) {
+      Double current = dataVector.get(position);
+      if (current > maximum) {
+        maximum = current;
+        maximumPositionList.clear();
+        maximumPositionList.add(position);
+      } else if (current.equals(maximum)) {
+        maximumPositionList.add(position);
+      }
+    }
+
+    return maximumPositionList;
   }
 }
