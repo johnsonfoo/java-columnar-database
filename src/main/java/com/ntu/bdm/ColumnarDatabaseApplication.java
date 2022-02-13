@@ -1,6 +1,7 @@
 package com.ntu.bdm;
 
 import com.ntu.bdm.util.DateUtility;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
@@ -15,6 +16,19 @@ public class ColumnarDatabaseApplication {
     populateColumnVectorsFromCsv(csvFileManager, columnVectorManager);
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
+
+    for (String year : new String[]{"2003", "2013"}) {
+      for (Month month : Month.values()) {
+        List<Integer> positionList = findByStationAndYearAndMonth(columnIndexManager, "Paya Lebar",
+            year, String.valueOf(month));
+
+        List<Integer> minimumTemperatureList = getMinimumPositionList(positionList,
+            columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
+
+        List<Integer> minimumHumidityList = getMinimumPositionList(positionList,
+            columnVectorManager.getDoubleColumnVectors().get("Humidity").getDataVector());
+      }
+    }
   }
 
   public static ColumnVectorManager createColumnVectorsFromCsv() {
@@ -83,5 +97,29 @@ public class ColumnarDatabaseApplication {
     }
 
     return positionList;
+  }
+
+  public static List<Integer> getMinimumPositionList(List<Integer> positionList,
+      List<Double> dataVector) {
+    List<Integer> minimumPositionList = new ArrayList<>();
+
+    if (positionList.size() == 0) {
+      return minimumPositionList;
+    }
+
+    Double minimum = dataVector.get(positionList.get(0));
+
+    for (Integer position : positionList) {
+      Double current = dataVector.get(position);
+      if (current < minimum) {
+        minimum = current;
+        minimumPositionList.clear();
+        minimumPositionList.add(position);
+      } else if (current.equals(minimum)) {
+        minimumPositionList.add(position);
+      }
+    }
+
+    return minimumPositionList;
   }
 }
