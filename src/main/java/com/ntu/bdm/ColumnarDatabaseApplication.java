@@ -21,7 +21,7 @@ public class ColumnarDatabaseApplication {
     for (String year : new String[]{"2003", "2013"}) {
       for (Month month : Month.values()) {
         Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put("Location", "Paya Lebar");
+        queryParameters.put("Station", "Paya Lebar");
         queryParameters.put("Year", year);
         queryParameters.put("Month", String.valueOf(month));
 
