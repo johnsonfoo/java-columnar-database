@@ -50,7 +50,7 @@ public class ColumnIndexManager {
       // The following computes the bitwise AND between the bitmaps retrieved to obtain bitmap
       // representing rows satisfying all query parameters
       if (resultBitmap == null) {
-        resultBitmap = bitmap;
+        resultBitmap = (BitSet) bitmap.clone();
       } else {
         resultBitmap.and(bitmap);
       }
