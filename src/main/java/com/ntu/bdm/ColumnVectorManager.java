@@ -19,15 +19,15 @@ public class ColumnVectorManager {
   }
 
   public void createCategoricalColumnVector(String fieldName) {
-    categoricalColumnVectors.put(fieldName, new CategoricalColumnVector<String>());
+    categoricalColumnVectors.put(fieldName, new CategoricalColumnVector<>());
   }
 
   public void createDoubleColumnVector(String fieldName) {
-    doubleColumnVectors.put(fieldName, new ColumnVector<Double>());
+    doubleColumnVectors.put(fieldName, new ColumnVector<>());
   }
 
   public void createStringColumnVector(String fieldName) {
-    stringColumnVectors.put(fieldName, new ColumnVector<String>());
+    stringColumnVectors.put(fieldName, new ColumnVector<>());
   }
 
   public void addToCategoricalColumnVector(String fieldName, String value) {

@@ -18,7 +18,7 @@ public class ColumnIndexManager {
 
   public void constructCategoricalColumnIndex(String fieldName,
       CategoricalColumnVector<String> categoricalColumnVector) {
-    categoricalColumnIndexes.put(fieldName, new CategoricalColumnIndex<String>());
+    categoricalColumnIndexes.put(fieldName, new CategoricalColumnIndex<>());
     categoricalColumnIndexes.get(fieldName).constructBitmapIndex(categoricalColumnVector);
   }
 
