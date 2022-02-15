@@ -27,17 +27,17 @@ public class ColumnarDatabaseApplication {
         List<Integer> positionList = columnIndexManager.findByFieldNamesAndCategories(
             queryParameters);
 
-        List[] minimumMaximumTemperatureList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+        List<List<Integer>> minimumMaximumTemperatureList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
             "Temperature", positionList);
 
-        List[] minimumMaximumHumidityList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+        List<List<Integer>> minimumMaximumHumidityList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
             "Humidity", positionList);
 
         System.out.println("Year " + year + " Month " + month);
-        System.out.println("Min Temperature Index: " + minimumMaximumTemperatureList[0]);
-        System.out.println("Max Temperature Index: " + minimumMaximumTemperatureList[1]);
-        System.out.println("Min Humidity Index: " + minimumMaximumHumidityList[0]);
-        System.out.println("Max Humidity Index: " + minimumMaximumHumidityList[1]);
+        System.out.println("Min Temperature Index: " + minimumMaximumTemperatureList.get(0));
+        System.out.println("Max Temperature Index: " + minimumMaximumTemperatureList.get(1));
+        System.out.println("Min Humidity Index: " + minimumMaximumHumidityList.get(0));
+        System.out.println("Max Humidity Index: " + minimumMaximumHumidityList.get(1));
         System.out.println();
       }
     }

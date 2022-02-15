@@ -54,7 +54,7 @@ public class ColumnVectorManager {
     return stringColumnVectors;
   }
 
-  public List[] getMinimumMaximumPositionListByFieldName(String fieldName,
+  public List<List<Integer>> getMinimumMaximumPositionListByFieldName(String fieldName,
       List<Integer> positionList) {
     List<Double> dataVector = getDoubleColumnVectors().get(fieldName).getDataVector();
 
@@ -62,7 +62,7 @@ public class ColumnVectorManager {
     List<Integer> maximumPositionList = new ArrayList<>();
 
     if (positionList.size() == 0) {
-      return new List[]{minimumPositionList, maximumPositionList};
+      return List.of(minimumPositionList, maximumPositionList);
     }
 
     Double minimum = dataVector.get(positionList.get(0));
@@ -88,6 +88,6 @@ public class ColumnVectorManager {
       }
     }
 
-    return new List[]{minimumPositionList, maximumPositionList};
+    return List.of(minimumPositionList, maximumPositionList);
   }
 }
