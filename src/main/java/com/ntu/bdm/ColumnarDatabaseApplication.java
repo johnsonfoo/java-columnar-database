@@ -3,8 +3,9 @@ package com.ntu.bdm;
 import com.ntu.bdm.util.DateUtility;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ColumnarDatabaseApplication {
 
@@ -19,8 +20,13 @@ public class ColumnarDatabaseApplication {
 
     for (String year : new String[]{"2003", "2013"}) {
       for (Month month : Month.values()) {
-        List<Integer> positionList = findByStationAndYearAndMonth(columnIndexManager, "Paya Lebar",
-            year, String.valueOf(month));
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put("Location", "Paya Lebar");
+        queryParameters.put("Year", year);
+        queryParameters.put("Month", String.valueOf(month));
+
+        List<Integer> positionList = columnIndexManager.findByFieldNamesAndCategories(
+            queryParameters);
 
         List<Integer> maximumTemperatureList = getMaximumPositionList(positionList,
             columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
@@ -79,28 +85,6 @@ public class ColumnarDatabaseApplication {
       ColumnIndexManager columnIndexManager) {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
-  }
-
-  public static List<Integer> findByStationAndYearAndMonth(ColumnIndexManager columnIndexManager,
-      String station, String year, String month) {
-    BitSet stationBitmap = columnIndexManager.findBitmapByFieldNameAndCategory("Station", station);
-    BitSet yearBitmap = columnIndexManager.findBitmapByFieldNameAndCategory("Year", year);
-    BitSet monthBitmap = columnIndexManager.findBitmapByFieldNameAndCategory("Month", month);
-
-    // The following computes the bitwise AND between all 3 bitmaps retrieved above to obtain bitmap
-    // representing rows satisfying station, year and month condition
-    BitSet resultBitmap = (BitSet) stationBitmap.clone();
-    resultBitmap.and(yearBitmap);
-    resultBitmap.and(monthBitmap);
-
-    List<Integer> positionList = new ArrayList<>();
-
-    // To iterate over the true bits in a BitSet, use the following loop
-    for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
-      positionList.add(i);
-    }
-
-    return positionList;
   }
 
   public static List<Integer> getMinimumPositionList(List<Integer> positionList,
