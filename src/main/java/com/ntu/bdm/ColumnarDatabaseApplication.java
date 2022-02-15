@@ -38,25 +38,27 @@ public class ColumnarDatabaseApplication {
         List<Integer> positionList = columnIndexManager.findByFieldNamesAndCategories(
             queryParameters);
 
-        List<List<Integer>> minimumMaximumTemperatureList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+        List<List<Integer>> minimumMaximumTemperaturePositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
             "Temperature", positionList);
 
-        List<List<Integer>> minimumMaximumHumidityList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+        List<List<Integer>> minimumMaximumHumidityPositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
             "Humidity", positionList);
 
         System.out.println("Year " + year + " Month " + month);
-        System.out.println("Min Temperature Index: " + minimumMaximumTemperatureList.get(0));
-        System.out.println("Max Temperature Index: " + minimumMaximumTemperatureList.get(1));
-        System.out.println("Min Humidity Index: " + minimumMaximumHumidityList.get(0));
-        System.out.println("Max Humidity Index: " + minimumMaximumHumidityList.get(1));
+        System.out.println(
+            "Min Temperature Index: " + minimumMaximumTemperaturePositionList.get(0));
+        System.out.println(
+            "Max Temperature Index: " + minimumMaximumTemperaturePositionList.get(1));
+        System.out.println("Min Humidity Index: " + minimumMaximumHumidityPositionList.get(0));
+        System.out.println("Max Humidity Index: " + minimumMaximumHumidityPositionList.get(1));
         System.out.println();
 
         csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRows(columnVectorManager, "Temperature",
-                minimumMaximumTemperatureList));
+                minimumMaximumTemperaturePositionList));
         csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRows(columnVectorManager, "Humidity",
-                minimumMaximumHumidityList));
+                minimumMaximumHumidityPositionList));
       }
     }
   }
