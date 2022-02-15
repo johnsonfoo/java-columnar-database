@@ -90,4 +90,8 @@ public class ColumnVectorManager {
 
     return List.of(minimumPositionList, maximumPositionList);
   }
+
+  public Double getDoubleByFieldNameAndPosition(String fieldName, Integer position){
+    return doubleColumnVectors.get(fieldName).get(position);
+  }
 }
