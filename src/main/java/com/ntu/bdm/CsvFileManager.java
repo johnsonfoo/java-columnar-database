@@ -1,13 +1,13 @@
 package com.ntu.bdm;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CsvFileManager {
@@ -22,13 +22,29 @@ public class CsvFileManager {
     return csvRows;
   }
 
-  public void readAll(String filePath) throws Exception {
-    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-      String csvRow;
-      while ((csvRow = br.readLine()) != null) {
-        String[] values = csvRow.split(",");
-        csvRows.add(Arrays.asList(values));
+  public void readDataAtOnce(String filePath) {
+
+    // first create file object for file placed at location
+    // specified by filepath
+    File file = new File(filePath);
+
+    try {
+      // Create an object of file reader
+      // class with CSV file as a parameter.
+      FileReader filereader = new FileReader(file);
+
+      // create csvReader object and skip first Line
+      CSVReader csvReader = new CSVReaderBuilder(filereader)
+          .withSkipLines(1)
+          .build();
+      List<String[]> allData = csvReader.readAll();
+
+      // add data to csvRows
+      for (String[] csvRow : allData) {
+        csvRows.add(List.of(csvRow));
       }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
     System.out.println("CSV file read to memory");
   }
