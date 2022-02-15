@@ -3,10 +3,11 @@ package com.ntu.bdm.index;
 import com.ntu.bdm.vector.CategoricalColumnVector;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CategoricalColumnIndex<T> {
 
-  private HashMap<T, BitSet> bitmapIndex;
+  private Map<T, BitSet> bitmapIndex;
 
   public CategoricalColumnIndex() {
     bitmapIndex = new HashMap<>();
@@ -25,7 +26,7 @@ public class CategoricalColumnIndex<T> {
     }
   }
 
-  public HashMap<T, BitSet> getBitmapIndex() {
+  public Map<T, BitSet> getBitmapIndex() {
     return bitmapIndex;
   }
 }

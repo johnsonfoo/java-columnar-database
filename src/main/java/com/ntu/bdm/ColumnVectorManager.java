@@ -5,12 +5,13 @@ import com.ntu.bdm.vector.ColumnVector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ColumnVectorManager {
 
-  private HashMap<String, CategoricalColumnVector<String>> categoricalColumnVectors;
-  private HashMap<String, ColumnVector<Double>> doubleColumnVectors;
-  private HashMap<String, ColumnVector<String>> stringColumnVectors;
+  private Map<String, CategoricalColumnVector<String>> categoricalColumnVectors;
+  private Map<String, ColumnVector<Double>> doubleColumnVectors;
+  private Map<String, ColumnVector<String>> stringColumnVectors;
 
   public ColumnVectorManager() {
     categoricalColumnVectors = new HashMap<>();
@@ -42,15 +43,15 @@ public class ColumnVectorManager {
     stringColumnVectors.get(fieldName).add(value);
   }
 
-  public HashMap<String, CategoricalColumnVector<String>> getCategoricalColumnVectors() {
+  public Map<String, CategoricalColumnVector<String>> getCategoricalColumnVectors() {
     return categoricalColumnVectors;
   }
 
-  public HashMap<String, ColumnVector<Double>> getDoubleColumnVectors() {
+  public Map<String, ColumnVector<Double>> getDoubleColumnVectors() {
     return doubleColumnVectors;
   }
 
-  public HashMap<String, ColumnVector<String>> getStringColumnVectors() {
+  public Map<String, ColumnVector<String>> getStringColumnVectors() {
     return stringColumnVectors;
   }
 
