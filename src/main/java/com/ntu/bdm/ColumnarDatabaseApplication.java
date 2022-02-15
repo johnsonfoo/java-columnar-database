@@ -2,6 +2,7 @@ package com.ntu.bdm;
 
 import com.ntu.bdm.util.DateUtility;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,5 +91,36 @@ public class ColumnarDatabaseApplication {
       ColumnIndexManager columnIndexManager) {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
+  }
+
+  public static List<String[]> getMinimumMaximumRows(ColumnVectorManager columnVectorManager,
+      String fieldName, List<List<Integer>> minimumMaximumPositionList) {
+    String station = "Paya Lebar";
+    List<Integer> minimumPositionList = minimumMaximumPositionList.get(0);
+    List<Integer> maximumPositionList = minimumMaximumPositionList.get(1);
+
+    List<String[]> minimumMaximumRows = new ArrayList<>();
+
+    for (Integer position : minimumPositionList) {
+      String date = DateUtility.parseAndGetDay(
+          columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
+      String category = "Min " + fieldName;
+      String fieldValue = String.valueOf(
+          columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
+
+      minimumMaximumRows.add(new String[]{date, station, category, fieldValue});
+    }
+
+    for (Integer position : maximumPositionList) {
+      String date = DateUtility.parseAndGetDay(
+          columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
+      String category = "Max " + fieldName;
+      String fieldValue = String.valueOf(
+          columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
+
+      minimumMaximumRows.add(new String[]{date, station, category, fieldValue});
+    }
+
+    return minimumMaximumRows;
   }
 }
