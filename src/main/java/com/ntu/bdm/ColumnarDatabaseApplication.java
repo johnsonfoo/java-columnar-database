@@ -9,22 +9,29 @@ import java.util.Map;
 
 public class ColumnarDatabaseApplication {
 
+  public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
+  public static final String EMPTY_DATA_SYMBOL = "M";
+  public static final String STATION = "Paya Lebar";
+  public static final String[] YEARS = new String[]{"2003", "2013"};
+  public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
+  public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
+      "Value"};
+
   public static void main(String[] args) {
     CsvFileManager csvFileManager = new CsvFileManager();
-    csvFileManager.readDataAtOnce("SingaporeWeather.csv");
+    csvFileManager.readDataAtOnce(INPUT_FILE_PATH);
 
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
     populateColumnVectorsFromCsv(csvFileManager, columnVectorManager);
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
 
-    csvFileManager.writeHeader("ScanResult.csv",
-        new String[]{"Date", "Station", "Category", "Value"});
+    csvFileManager.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
-    for (String year : new String[]{"2003", "2013"}) {
+    for (String year : YEARS) {
       for (Month month : Month.values()) {
         Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put("Station", "Paya Lebar");
+        queryParameters.put("Station", STATION);
         queryParameters.put("Year", year);
         queryParameters.put("Month", String.valueOf(month));
 
@@ -44,10 +51,10 @@ public class ColumnarDatabaseApplication {
         System.out.println("Max Humidity Index: " + minimumMaximumHumidityList.get(1));
         System.out.println();
 
-        csvFileManager.writeDataAtOnce("ScanResult.csv",
+        csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRows(columnVectorManager, "Temperature",
                 minimumMaximumTemperatureList));
-        csvFileManager.writeDataAtOnce("ScanResult.csv",
+        csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRows(columnVectorManager, "Humidity",
                 minimumMaximumHumidityList));
       }
@@ -85,11 +92,13 @@ public class ColumnarDatabaseApplication {
       columnVectorManager.addToCategoricalColumnVector("Station", station);
 
       String temperatureString = csvRow.get(3);
-      Double temperature = temperatureString.equals("M") ? null : Double.valueOf(temperatureString);
+      Double temperature =
+          temperatureString.equals(EMPTY_DATA_SYMBOL) ? null : Double.valueOf(temperatureString);
       columnVectorManager.addToDoubleColumnVector("Temperature", temperature);
 
       String humidityString = csvRow.get(4);
-      Double humidity = humidityString.equals("M") ? null : Double.valueOf(humidityString);
+      Double humidity =
+          humidityString.equals(EMPTY_DATA_SYMBOL) ? null : Double.valueOf(humidityString);
       columnVectorManager.addToDoubleColumnVector("Humidity", humidity);
     }
   }
@@ -102,7 +111,7 @@ public class ColumnarDatabaseApplication {
 
   public static List<String[]> getMinimumMaximumRows(ColumnVectorManager columnVectorManager,
       String fieldName, List<List<Integer>> minimumMaximumPositionList) {
-    String station = "Paya Lebar";
+    String station = STATION;
     List<Integer> minimumPositionList = minimumMaximumPositionList.get(0);
     List<Integer> maximumPositionList = minimumMaximumPositionList.get(1);
 
