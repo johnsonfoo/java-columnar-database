@@ -94,4 +94,8 @@ public class ColumnVectorManager {
   public Double getDoubleByFieldNameAndPosition(String fieldName, Integer position) {
     return doubleColumnVectors.get(fieldName).get(position);
   }
+
+  public String getStringByFieldNameAndPosition(String fieldName, Integer position) {
+    return stringColumnVectors.get(fieldName).get(position);
+  }
 }
