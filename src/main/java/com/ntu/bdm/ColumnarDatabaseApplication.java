@@ -17,6 +17,9 @@ public class ColumnarDatabaseApplication {
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
 
+    csvFileManager.writeHeader("ScanResult.csv",
+        new String[]{"Date", "Station", "Category", "Value"});
+
     for (String year : new String[]{"2003", "2013"}) {
       for (Month month : Month.values()) {
         Map<String, String> queryParameters = new HashMap<>();

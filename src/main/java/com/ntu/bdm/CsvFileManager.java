@@ -75,6 +75,30 @@ public class CsvFileManager {
     }
   }
 
+  public void writeHeader(String filePath, String[] data) {
+    // first create file object for file placed at location
+    // specified by filepath
+    File file = new File(filePath);
+
+    try {
+      // create FileWriter object with file as parameter
+      FileWriter outputFile = new FileWriter(file);
+
+      // create CSVWriter with ',' as separator
+      CSVWriter writer = new CSVWriter(outputFile, ',',
+          CSVWriter.NO_QUOTE_CHARACTER,
+          CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+          CSVWriter.DEFAULT_LINE_END);
+
+      // add data to csv
+      writer.writeNext(data);
+
+      // closing writer connection
+      writer.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   public void clear() {
     csvRows.clear();
