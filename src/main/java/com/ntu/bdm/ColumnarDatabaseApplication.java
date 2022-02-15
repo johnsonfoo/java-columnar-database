@@ -3,6 +3,7 @@ package com.ntu.bdm;
 import com.ntu.bdm.util.DateUtility;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +55,10 @@ public class ColumnarDatabaseApplication {
         System.out.println();
 
         csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
-            getMinimumMaximumRows(columnVectorManager, "Temperature",
+            getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Temperature",
                 minimumMaximumTemperaturePositionList));
         csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
-            getMinimumMaximumRows(columnVectorManager, "Humidity",
+            getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Humidity",
                 minimumMaximumHumidityPositionList));
       }
     }
@@ -111,7 +112,8 @@ public class ColumnarDatabaseApplication {
         columnVectorManager.getCategoricalColumnVectors());
   }
 
-  public static List<String[]> getMinimumMaximumRows(ColumnVectorManager columnVectorManager,
+  public static List<String[]> getMinimumMaximumRowsWithDistinctDates(
+      ColumnVectorManager columnVectorManager,
       String fieldName, List<List<Integer>> minimumMaximumPositionList) {
     String station = STATION;
     List<Integer> minimumPositionList = minimumMaximumPositionList.get(0);
@@ -126,7 +128,14 @@ public class ColumnarDatabaseApplication {
       String fieldValue = String.valueOf(
           columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
 
-      minimumMaximumRows.add(new String[]{date, station, category, fieldValue});
+      int currentSize = minimumMaximumRows.size();
+      String[] newRow = {date, station, category, fieldValue};
+
+      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
+        continue;
+      }
+
+      minimumMaximumRows.add(newRow);
     }
 
     for (Integer position : maximumPositionList) {
@@ -136,7 +145,14 @@ public class ColumnarDatabaseApplication {
       String fieldValue = String.valueOf(
           columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
 
-      minimumMaximumRows.add(new String[]{date, station, category, fieldValue});
+      int currentSize = minimumMaximumRows.size();
+      String[] newRow = {date, station, category, fieldValue};
+
+      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
+        continue;
+      }
+
+      minimumMaximumRows.add(newRow);
     }
 
     return minimumMaximumRows;
