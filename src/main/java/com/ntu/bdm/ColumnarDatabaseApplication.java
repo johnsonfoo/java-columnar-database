@@ -60,8 +60,8 @@ public class ColumnarDatabaseApplication {
       ColumnVectorManager columnVectorManager) {
     List<List<String>> csvRows = csvFileManager.getCsvRows();
 
-    for (int i = 1; i < csvRows.size(); i++) {
-      String timestamp = csvRows.get(i).get(1);
+    for (List<String> csvRow: csvRows) {
+      String timestamp = csvRow.get(1);
       columnVectorManager.addToStringColumnVector("Timestamp", timestamp);
 
       String year = DateUtility.parseAndGetYear(timestamp);
@@ -70,14 +70,14 @@ public class ColumnarDatabaseApplication {
       String month = DateUtility.parseAndGetMonth(timestamp);
       columnVectorManager.addToCategoricalColumnVector("Month", month);
 
-      String station = csvRows.get(i).get(2);
+      String station = csvRow.get(2);
       columnVectorManager.addToCategoricalColumnVector("Station", station);
 
-      String temperatureString = csvRows.get(i).get(3);
+      String temperatureString = csvRow.get(3);
       Double temperature = temperatureString.equals("M") ? null : Double.valueOf(temperatureString);
       columnVectorManager.addToDoubleColumnVector("Temperature", temperature);
 
-      String humidityString = csvRows.get(i).get(4);
+      String humidityString = csvRow.get(4);
       Double humidity = humidityString.equals("M") ? null : Double.valueOf(humidityString);
       columnVectorManager.addToDoubleColumnVector("Humidity", humidity);
     }
