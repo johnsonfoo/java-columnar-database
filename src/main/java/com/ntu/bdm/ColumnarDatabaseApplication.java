@@ -43,6 +43,13 @@ public class ColumnarDatabaseApplication {
         System.out.println("Min Humidity Index: " + minimumMaximumHumidityList.get(0));
         System.out.println("Max Humidity Index: " + minimumMaximumHumidityList.get(1));
         System.out.println();
+
+        csvFileManager.writeDataAtOnce("ScanResult.csv",
+            getMinimumMaximumRows(columnVectorManager, "Temperature",
+                minimumMaximumTemperatureList));
+        csvFileManager.writeDataAtOnce("ScanResult.csv",
+            getMinimumMaximumRows(columnVectorManager, "Humidity",
+                minimumMaximumHumidityList));
       }
     }
   }
