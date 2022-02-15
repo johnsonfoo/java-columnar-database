@@ -2,7 +2,9 @@ package com.ntu.bdm;
 
 import com.ntu.bdm.vector.CategoricalColumnVector;
 import com.ntu.bdm.vector.ColumnVector;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ColumnVectorManager {
 
@@ -50,5 +52,42 @@ public class ColumnVectorManager {
 
   public HashMap<String, ColumnVector<String>> getStringColumnVectors() {
     return stringColumnVectors;
+  }
+
+  public List[] getMinimumMaximumPositionListByFieldName(String fieldName,
+      List<Integer> positionList) {
+    List<Double> dataVector = getDoubleColumnVectors().get(fieldName).getDataVector();
+
+    List<Integer> minimumPositionList = new ArrayList<>();
+    List<Integer> maximumPositionList = new ArrayList<>();
+
+    if (positionList.size() == 0) {
+      return new List[]{minimumPositionList, maximumPositionList};
+    }
+
+    Double minimum = dataVector.get(positionList.get(0));
+    Double maximum = dataVector.get(positionList.get(0));
+
+    for (Integer position : positionList) {
+      Double current = dataVector.get(position);
+
+      if (current < minimum) {
+        minimum = current;
+        minimumPositionList.clear();
+        minimumPositionList.add(position);
+      } else if (current.equals(minimum)) {
+        minimumPositionList.add(position);
+      }
+
+      if (current > maximum) {
+        maximum = current;
+        maximumPositionList.clear();
+        maximumPositionList.add(position);
+      } else if (current.equals(maximum)) {
+        maximumPositionList.add(position);
+      }
+    }
+
+    return new List[]{minimumPositionList, maximumPositionList};
   }
 }

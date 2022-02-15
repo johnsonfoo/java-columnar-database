@@ -2,7 +2,6 @@ package com.ntu.bdm;
 
 import com.ntu.bdm.util.DateUtility;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +27,18 @@ public class ColumnarDatabaseApplication {
         List<Integer> positionList = columnIndexManager.findByFieldNamesAndCategories(
             queryParameters);
 
-        List<Integer> maximumTemperatureList = getMaximumPositionList(positionList,
-            columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
-        List<Integer> minimumTemperatureList = getMinimumPositionList(positionList,
-            columnVectorManager.getDoubleColumnVectors().get("Temperature").getDataVector());
+        List[] minimumMaximumTemperatureList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+            "Temperature", positionList);
 
-        List<Integer> maximumHumidityList = getMaximumPositionList(positionList,
-            columnVectorManager.getDoubleColumnVectors().get("Humidity").getDataVector());
-        List<Integer> minimumHumidityList = getMinimumPositionList(positionList,
-            columnVectorManager.getDoubleColumnVectors().get("Humidity").getDataVector());
+        List[] minimumMaximumHumidityList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+            "Humidity", positionList);
+
+        System.out.println("Year " + year + " Month " + month);
+        System.out.println("Min Temperature Index: " + minimumMaximumTemperatureList[0]);
+        System.out.println("Max Temperature Index: " + minimumMaximumTemperatureList[1]);
+        System.out.println("Min Humidity Index: " + minimumMaximumHumidityList[0]);
+        System.out.println("Max Humidity Index: " + minimumMaximumHumidityList[1]);
+        System.out.println();
       }
     }
   }
@@ -85,54 +87,5 @@ public class ColumnarDatabaseApplication {
       ColumnIndexManager columnIndexManager) {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
-  }
-
-  public static List<Integer> getMinimumPositionList(List<Integer> positionList,
-      List<Double> dataVector) {
-    List<Integer> minimumPositionList = new ArrayList<>();
-
-    if (positionList.size() == 0) {
-      return minimumPositionList;
-    }
-
-    Double minimum = dataVector.get(positionList.get(0));
-
-    for (Integer position : positionList) {
-      Double current = dataVector.get(position);
-      if (current < minimum) {
-        minimum = current;
-        minimumPositionList.clear();
-        minimumPositionList.add(position);
-      } else if (current.equals(minimum)) {
-        minimumPositionList.add(position);
-      }
-    }
-
-    return minimumPositionList;
-  }
-
-  // TODO: Combine logic with getMinimumPositionList to return minimumPositionList and maximumPositionList
-  public static List<Integer> getMaximumPositionList(List<Integer> positionList,
-      List<Double> dataVector) {
-    List<Integer> maximumPositionList = new ArrayList<>();
-
-    if (positionList.size() == 0) {
-      return maximumPositionList;
-    }
-
-    Double maximum = dataVector.get(positionList.get(0));
-
-    for (Integer position : positionList) {
-      Double current = dataVector.get(position);
-      if (current > maximum) {
-        maximum = current;
-        maximumPositionList.clear();
-        maximumPositionList.add(position);
-      } else if (current.equals(maximum)) {
-        maximumPositionList.add(position);
-      }
-    }
-
-    return maximumPositionList;
   }
 }
