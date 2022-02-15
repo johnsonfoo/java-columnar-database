@@ -8,9 +8,9 @@ import java.util.Map;
 
 public class ColumnarDatabaseApplication {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     CsvFileManager csvFileManager = new CsvFileManager();
-    csvFileManager.readAll("SingaporeWeather.csv");
+    csvFileManager.readDataAtOnce("SingaporeWeather.csv");
 
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
     populateColumnVectorsFromCsv(csvFileManager, columnVectorManager);
