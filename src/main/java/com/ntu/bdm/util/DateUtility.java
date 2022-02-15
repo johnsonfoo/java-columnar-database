@@ -20,4 +20,9 @@ public class DateUtility {
     LocalDate localDate = LocalDate.parse(timestamp, formatTimeStamp);
     return String.valueOf(localDate.getMonth());
   }
+
+  public static String parseAndGetDay(String timestamp) {
+    LocalDate localDate = LocalDate.parse(timestamp, formatTimeStamp);
+    return localDate.toString();
+  }
 }
