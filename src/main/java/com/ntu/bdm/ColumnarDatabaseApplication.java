@@ -1,5 +1,6 @@
 package com.ntu.bdm;
 
+import com.ntu.bdm.util.CSVFileUtil;
 import com.ntu.bdm.util.DateUtility;
 import java.time.Month;
 import java.util.ArrayList;
@@ -19,15 +20,13 @@ public class ColumnarDatabaseApplication {
       "Value"};
 
   public static void main(String[] args) {
-    CsvFileManager csvFileManager = new CsvFileManager();
-    csvFileManager.readDataAtOnce(INPUT_FILE_PATH);
-
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
-    populateColumnVectorsFromCsv(csvFileManager, columnVectorManager);
+    populateColumnVectorsFromCsv(columnVectorManager,
+        CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
 
-    csvFileManager.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
+    CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
     for (String year : YEARS) {
       for (Month month : Month.values()) {
@@ -54,10 +53,10 @@ public class ColumnarDatabaseApplication {
         System.out.println("Max Humidity Index: " + minimumMaximumHumidityPositionList.get(1));
         System.out.println();
 
-        csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
+        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Temperature",
                 minimumMaximumTemperaturePositionList));
-        csvFileManager.writeDataAtOnce(OUTPUT_FILE_PATH,
+        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Humidity",
                 minimumMaximumHumidityPositionList));
       }
@@ -77,10 +76,9 @@ public class ColumnarDatabaseApplication {
     return columnVectorManager;
   }
 
-  public static void populateColumnVectorsFromCsv(CsvFileManager csvFileManager,
-      ColumnVectorManager columnVectorManager) {
-    List<List<String>> csvRows = csvFileManager.getCsvRows();
-
+  public static void populateColumnVectorsFromCsv(ColumnVectorManager columnVectorManager,
+      List<List<String>> csvRows
+  ) {
     for (List<String> csvRow : csvRows) {
       String timestamp = csvRow.get(1);
       columnVectorManager.addToStringColumnVector("Timestamp", timestamp);
