@@ -41,11 +41,16 @@ public class ColumnIndexManager {
 
   public List<Integer> findByFieldNamesAndCategories(Map<String, String> queryParameters) {
     BitSet resultBitmap = null;
+    List<Integer> positionList = new ArrayList<>();
 
     for (Map.Entry<String, String> entry : queryParameters.entrySet()) {
       String fieldName = entry.getKey();
       String category = entry.getValue();
       BitSet bitmap = findBitmapByFieldNameAndCategory(fieldName, category);
+
+      if (bitmap == null) {
+        return positionList;
+      }
 
       // The following computes the bitwise AND between the bitmaps retrieved to obtain bitmap
       // representing rows satisfying all query parameters
@@ -55,8 +60,6 @@ public class ColumnIndexManager {
         resultBitmap.and(bitmap);
       }
     }
-
-    List<Integer> positionList = new ArrayList<>();
 
     // To iterate over the true bits in a BitSet, use the following loop
     for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
