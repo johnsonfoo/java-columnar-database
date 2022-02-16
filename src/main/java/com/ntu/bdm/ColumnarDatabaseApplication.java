@@ -21,8 +21,7 @@ public class ColumnarDatabaseApplication {
 
   public static void main(String[] args) {
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
-    populateColumnVectorsFromCsv(columnVectorManager,
-        CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
+    populateColumnVectorsFromCsv(columnVectorManager, CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
 
@@ -77,10 +76,9 @@ public class ColumnarDatabaseApplication {
   }
 
   public static void populateColumnVectorsFromCsv(ColumnVectorManager columnVectorManager,
-      List<List<String>> csvRows
-  ) {
-    for (List<String> csvRow : csvRows) {
-      String timestamp = csvRow.get(1);
+      List<String[]> csvRows) {
+    for (String[] csvRow : csvRows) {
+      String timestamp = csvRow[1];
       columnVectorManager.addToStringColumnVector("Timestamp", timestamp);
 
       String year = DateUtility.parseAndGetYear(timestamp);
@@ -89,15 +87,15 @@ public class ColumnarDatabaseApplication {
       String month = DateUtility.parseAndGetMonth(timestamp);
       columnVectorManager.addToCategoricalColumnVector("Month", month);
 
-      String station = csvRow.get(2);
+      String station = csvRow[2];
       columnVectorManager.addToCategoricalColumnVector("Station", station);
 
-      String temperatureString = csvRow.get(3);
+      String temperatureString = csvRow[3];
       Double temperature =
           temperatureString.equals(EMPTY_DATA_SYMBOL) ? null : Double.valueOf(temperatureString);
       columnVectorManager.addToDoubleColumnVector("Temperature", temperature);
 
-      String humidityString = csvRow.get(4);
+      String humidityString = csvRow[4];
       Double humidity =
           humidityString.equals(EMPTY_DATA_SYMBOL) ? null : Double.valueOf(humidityString);
       columnVectorManager.addToDoubleColumnVector("Humidity", humidity);

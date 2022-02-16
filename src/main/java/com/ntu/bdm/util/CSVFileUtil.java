@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CSVFileUtil {
@@ -15,33 +14,31 @@ public class CSVFileUtil {
   private CSVFileUtil() {
   }
 
-  public static List<List<String>> readDataAtOnce(String filePath) {
+  public static List<String[]> readDataAtOnce(String filePath) {
 
     // first create file object for file placed at location
     // specified by filepath
     File file = new File(filePath);
 
-    List<List<String>> csvRows = new ArrayList<>();
-
+    List<String[]> data = null;
     try {
-      // Create an object of file reader
-      // class with CSV file as a parameter.
-      FileReader filereader = new FileReader(file);
+      // create FileWriter object with file as parameter
+      FileReader inputFile = new FileReader(file);
 
       // create csvReader object and skip first Line
-      CSVReader csvReader = new CSVReaderBuilder(filereader)
+      CSVReader reader = new CSVReaderBuilder(inputFile)
           .withSkipLines(1)
           .build();
-      List<String[]> allData = csvReader.readAll();
 
-      // add data to csvRows
-      for (String[] csvRow : allData) {
-        csvRows.add(List.of(csvRow));
-      }
+      // read data from csv
+      data = reader.readAll();
+
+      // closing reader connection
+      reader.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return csvRows;
+    return data;
   }
 
   public static void writeDataLineByLine(String filePath, String[] data) {
