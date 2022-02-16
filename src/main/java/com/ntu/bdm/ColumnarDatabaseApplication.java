@@ -118,7 +118,7 @@ public class ColumnarDatabaseApplication {
     List<String[]> minimumMaximumRows = new ArrayList<>();
 
     for (Integer position : minimumPositionList) {
-      String date = TimestampUtil.parseAndGetDay(
+      String date = TimestampUtil.parseAndGetDate(
           columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
       String category = "Min " + fieldName;
       String fieldValue = String.valueOf(
@@ -135,7 +135,7 @@ public class ColumnarDatabaseApplication {
     }
 
     for (Integer position : maximumPositionList) {
-      String date = TimestampUtil.parseAndGetDay(
+      String date = TimestampUtil.parseAndGetDate(
           columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
       String category = "Max " + fieldName;
       String fieldValue = String.valueOf(

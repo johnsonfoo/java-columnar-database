@@ -21,7 +21,7 @@ public class TimestampUtil {
     return String.valueOf(localDate.getMonth());
   }
 
-  public static String parseAndGetDay(String timestamp) {
+  public static String parseAndGetDate(String timestamp) {
     LocalDate localDate = LocalDate.parse(timestamp, formatTimeStamp);
     return localDate.toString();
   }
