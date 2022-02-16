@@ -1,4 +1,4 @@
-package com.ntu.bdm;
+package com.ntu.bdm.util;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -10,23 +10,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvFileManager {
+public class CSVFileUtil {
 
-  final List<List<String>> csvRows;
-
-  public CsvFileManager() {
-    this.csvRows = new ArrayList<>();
+  private CSVFileUtil() {
   }
 
-  public List<List<String>> getCsvRows() {
-    return csvRows;
-  }
-
-  public void readDataAtOnce(String filePath) {
+  public static List<List<String>> readDataAtOnce(String filePath) {
 
     // first create file object for file placed at location
     // specified by filepath
     File file = new File(filePath);
+
+    List<List<String>> csvRows = new ArrayList<>();
 
     try {
       // Create an object of file reader
@@ -46,10 +41,10 @@ public class CsvFileManager {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    System.out.println("CSV file read to memory");
+    return csvRows;
   }
 
-  public void writeDataLineByLine(String filePath, String[] data) {
+  public static void writeDataLineByLine(String filePath, String[] data) {
 
     // first create file object for file placed at location
     // specified by filepath
@@ -75,7 +70,7 @@ public class CsvFileManager {
     }
   }
 
-  public void writeDataAtOnce(String filePath, List<String[]> data) {
+  public static void writeDataAtOnce(String filePath, List<String[]> data) {
 
     // first create file object for file placed at location
     // specified by filepath
@@ -101,7 +96,7 @@ public class CsvFileManager {
     }
   }
 
-  public void writeHeader(String filePath, String[] data) {
+  public static void writeHeader(String filePath, String[] data) {
     // first create file object for file placed at location
     // specified by filepath
     File file = new File(filePath);
@@ -124,9 +119,5 @@ public class CsvFileManager {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  }
-
-  public void clear() {
-    csvRows.clear();
   }
 }
