@@ -3,9 +3,9 @@ package com.ntu.bdm.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class DateUtility {
+public class TimestampUtil {
 
-  private DateUtility() {
+  private TimestampUtil() {
   }
 
   public static final DateTimeFormatter formatTimeStamp = DateTimeFormatter.ofPattern(

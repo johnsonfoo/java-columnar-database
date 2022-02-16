@@ -1,7 +1,7 @@
 package com.ntu.bdm;
 
 import com.ntu.bdm.util.CSVFileUtil;
-import com.ntu.bdm.util.DateUtility;
+import com.ntu.bdm.util.TimestampUtil;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,10 +81,10 @@ public class ColumnarDatabaseApplication {
       String timestamp = csvRow[1];
       columnVectorManager.addToStringColumnVector("Timestamp", timestamp);
 
-      String year = DateUtility.parseAndGetYear(timestamp);
+      String year = TimestampUtil.parseAndGetYear(timestamp);
       columnVectorManager.addToCategoricalColumnVector("Year", year);
 
-      String month = DateUtility.parseAndGetMonth(timestamp);
+      String month = TimestampUtil.parseAndGetMonth(timestamp);
       columnVectorManager.addToCategoricalColumnVector("Month", month);
 
       String station = csvRow[2];
@@ -118,7 +118,7 @@ public class ColumnarDatabaseApplication {
     List<String[]> minimumMaximumRows = new ArrayList<>();
 
     for (Integer position : minimumPositionList) {
-      String date = DateUtility.parseAndGetDay(
+      String date = TimestampUtil.parseAndGetDay(
           columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
       String category = "Min " + fieldName;
       String fieldValue = String.valueOf(
@@ -135,7 +135,7 @@ public class ColumnarDatabaseApplication {
     }
 
     for (Integer position : maximumPositionList) {
-      String date = DateUtility.parseAndGetDay(
+      String date = TimestampUtil.parseAndGetDay(
           columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
       String category = "Max " + fieldName;
       String fieldValue = String.valueOf(
