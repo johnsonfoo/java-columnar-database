@@ -20,6 +20,10 @@ public class ColumnarDatabaseApplication {
       "Value"};
 
   public static void main(String[] args) {
+    mainMemoryStorage();
+  }
+
+  public static void mainMemoryStorage() {
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
     populateColumnVectorsFromCsv(columnVectorManager, CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
@@ -102,7 +106,7 @@ public class ColumnarDatabaseApplication {
     }
   }
 
-  private static void createCategoricalColumnIndexes(ColumnVectorManager columnVectorManager,
+  public static void createCategoricalColumnIndexes(ColumnVectorManager columnVectorManager,
       ColumnIndexManager columnIndexManager) {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
