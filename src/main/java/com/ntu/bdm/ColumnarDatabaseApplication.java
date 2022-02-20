@@ -8,18 +8,35 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class ColumnarDatabaseApplication {
 
   public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
   public static final String EMPTY_DATA_SYMBOL = "M";
-  public static final String STATION = "Paya Lebar";
-  public static final String[] YEARS = new String[]{"2003", "2013"};
+  public static String MATRICULATION_NUMBER;
+  public static String STATION;
+  public static String[] YEARS;
   public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
 
   public static void main(String[] args) {
+    readCommandLineParameters(args);
+    initialiseStationAndYears();
+
+    System.out.println(MATRICULATION_NUMBER);
+    System.out.println(STATION);
+    System.out.println(Arrays.toString(YEARS));
+
     mainMemoryStorage();
   }
 
@@ -156,5 +173,50 @@ public class ColumnarDatabaseApplication {
     }
 
     return minimumMaximumRows;
+  }
+
+  public static void readCommandLineParameters(String[] args) {
+    // define options
+    Options options = new Options();
+
+    Option config = Option.builder("m")
+        .longOpt("matric")
+        .hasArg()
+        .required(true)
+        .desc("Sets the matriculation number").build();
+    options.addOption(config);
+
+    // define parser
+    CommandLine cmd;
+    CommandLineParser parser = new DefaultParser();
+    HelpFormatter helper = new HelpFormatter();
+
+    try {
+      cmd = parser.parse(options, args);
+      if (cmd.hasOption("m")) {
+        String opt_config = cmd.getOptionValue("m");
+        System.out.println("Matriculation number set to " + opt_config);
+        MATRICULATION_NUMBER = opt_config;
+      }
+    } catch (ParseException e) {
+      System.out.println(e.getMessage());
+      helper.printHelp("Usage:", options);
+      System.exit(0);
+    }
+  }
+
+  public static void initialiseStationAndYears() {
+    String matriculationNumber = MATRICULATION_NUMBER;
+    int length = matriculationNumber.length();
+
+    int secondLastDigit = Integer.parseInt(matriculationNumber.substring(length - 3, length - 2));
+    int lastDigit = Integer.parseInt(matriculationNumber.substring(length - 2, length - 1));
+
+    STATION = secondLastDigit % 2 == 0 ? "Changi" : "Paya Lebar";
+
+    List<String> years = IntStream.range(2002, 2022).filter(i -> i % 10 == lastDigit)
+        .mapToObj(String::valueOf).collect(Collectors.toList());
+
+    YEARS = years.toArray(new String[0]);
   }
 }
