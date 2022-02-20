@@ -127,6 +127,29 @@ public class ColumnarDatabaseApplication {
         columnVectorManager.getCategoricalColumnVectors());
   }
 
+  public static void outputColumnVectorsToCsv(ColumnVectorManager columnVectorManager) {
+    String timestampFilePath = "Timestamp.csv";
+    String[] timestampFileHeader = new String[]{"id", "Timestamp"};
+    String temperatureFilePath = "Temperature.csv";
+    String[] temperatureFileHeader = new String[]{"id", "Temperature"};
+    String humidityFilePath = "Humidity.csv";
+    String[] humidityFileHeader = new String[]{"id", "Humidity"};
+
+    CSVFileUtil.writeHeader(timestampFilePath, timestampFileHeader);
+    CSVFileUtil.writeDataAtOnce(timestampFilePath,
+        columnVectorManager.serialiseStringColumnVectorByFieldName("Timestamp"));
+
+    CSVFileUtil.writeHeader(temperatureFilePath, temperatureFileHeader);
+    CSVFileUtil.writeDataAtOnce(temperatureFilePath,
+        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Temperature",
+            EMPTY_DATA_SYMBOL));
+
+    CSVFileUtil.writeHeader(humidityFilePath, humidityFileHeader);
+    CSVFileUtil.writeDataAtOnce(humidityFilePath,
+        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Humidity",
+            EMPTY_DATA_SYMBOL));
+  }
+
   public static List<String[]> getMinimumMaximumRowsWithDistinctDates(
       ColumnVectorManager columnVectorManager,
       String fieldName, List<List<Integer>> minimumMaximumPositionList) {
