@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -214,9 +213,7 @@ public class ColumnarDatabaseApplication {
 
     STATION = secondLastDigit % 2 == 0 ? "Changi" : "Paya Lebar";
 
-    List<String> years = IntStream.range(2002, 2022).filter(i -> i % 10 == lastDigit)
-        .mapToObj(String::valueOf).collect(Collectors.toList());
-
-    YEARS = years.toArray(new String[0]);
+    YEARS = IntStream.range(2002, 2022).filter(i -> i % 10 == lastDigit)
+        .mapToObj(String::valueOf).toArray(String[]::new);
   }
 }
