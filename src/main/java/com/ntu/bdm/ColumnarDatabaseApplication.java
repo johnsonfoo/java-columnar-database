@@ -21,6 +21,7 @@ public class ColumnarDatabaseApplication {
 
   public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
   public static final String EMPTY_DATA_SYMBOL = "M";
+  public static Boolean DISK_STORAGE = false;
   public static String MATRICULATION_NUMBER;
   public static String STATION;
   public static String[] YEARS;
@@ -32,11 +33,9 @@ public class ColumnarDatabaseApplication {
     readCommandLineParameters(args);
     initialiseStationAndYears();
 
-    System.out.println(MATRICULATION_NUMBER);
-    System.out.println(STATION);
-    System.out.println(Arrays.toString(YEARS));
-
-    mainMemoryStorage();
+    if (!DISK_STORAGE) {
+      mainMemoryStorage();
+    }
   }
 
   public static void mainMemoryStorage() {
@@ -178,6 +177,8 @@ public class ColumnarDatabaseApplication {
     // define options
     Options options = new Options();
 
+    options.addOption("d", "disk", false, "Uses disk storage");
+
     Option config = Option.builder("m")
         .longOpt("matric")
         .hasArg()
@@ -192,6 +193,10 @@ public class ColumnarDatabaseApplication {
 
     try {
       cmd = parser.parse(options, args);
+      if (cmd.hasOption("d")) {
+        System.out.println("Disk storage set to true");
+        DISK_STORAGE = true;
+      }
       if (cmd.hasOption("m")) {
         String opt_config = cmd.getOptionValue("m");
         System.out.println("Matriculation number set to " + opt_config);
