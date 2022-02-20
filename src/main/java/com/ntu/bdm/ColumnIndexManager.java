@@ -68,4 +68,19 @@ public class ColumnIndexManager {
 
     return positionList;
   }
+
+  public Map<String, byte[]> serialiseCategoricalColumnIndexByFieldName(String fieldName) {
+    Map<String, byte[]> serialisedCategoricalColumnIndex = new HashMap<>();
+
+    CategoricalColumnIndex<String> categoricalColumnIndex = categoricalColumnIndexes.get(fieldName);
+    Map<String, BitSet> bitmapIndex = categoricalColumnIndex.getBitmapIndex();
+
+    for (Map.Entry<String, BitSet> entry : bitmapIndex.entrySet()) {
+      String category = entry.getKey();
+      BitSet bitmap = entry.getValue();
+      serialisedCategoricalColumnIndex.put(category, bitmap.toByteArray());
+    }
+
+    return serialisedCategoricalColumnIndex;
+  }
 }
