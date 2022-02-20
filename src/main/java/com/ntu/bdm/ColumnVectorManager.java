@@ -105,4 +105,37 @@ public class ColumnVectorManager {
   public String getStringByFieldNameAndPosition(String fieldName, Integer position) {
     return stringColumnVectors.get(fieldName).get(position);
   }
+
+  public List<String[]> serialiseDoubleColumnVectorByFieldName(String fieldName,
+      String emptyDataSymbol) {
+    List<String[]> serialisedDoubleColumnVector = new ArrayList<>();
+
+    ColumnVector<Double> doubleColumnVector = doubleColumnVectors.get(fieldName);
+    List<Double> dataVector = doubleColumnVector.getDataVector();
+
+    for (int i = 0; i < doubleColumnVector.getValueCount(); i++) {
+      String id = String.valueOf(i);
+      if (doubleColumnVector.isNull(i)) {
+        serialisedDoubleColumnVector.add(new String[]{id, emptyDataSymbol});
+      } else {
+        serialisedDoubleColumnVector.add(new String[]{id, String.valueOf(dataVector.get(i))});
+      }
+    }
+
+    return serialisedDoubleColumnVector;
+  }
+
+  public List<String[]> serialiseStringColumnVectorByFieldName(String fieldName) {
+    List<String[]> serialisedStringColumnVector = new ArrayList<>();
+
+    ColumnVector<String> stringColumnVector = stringColumnVectors.get(fieldName);
+    List<String> dataVector = stringColumnVector.getDataVector();
+
+    for (int i = 0; i < stringColumnVector.getValueCount(); i++) {
+      String id = String.valueOf(i);
+      serialisedStringColumnVector.add(new String[]{id, String.valueOf(dataVector.get(i))});
+    }
+
+    return serialisedStringColumnVector;
+  }
 }
