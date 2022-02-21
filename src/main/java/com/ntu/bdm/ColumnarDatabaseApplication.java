@@ -67,18 +67,10 @@ public class ColumnarDatabaseApplication {
         List<List<Integer>> minimumMaximumHumidityPositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
             "Humidity", positionList);
 
-        System.out.println("Year " + year + " Month " + month);
-        System.out.println(
-            "Min Temperature Index: " + minimumMaximumTemperaturePositionList.get(0));
-        System.out.println(
-            "Max Temperature Index: " + minimumMaximumTemperaturePositionList.get(1));
-        System.out.println("Min Humidity Index: " + minimumMaximumHumidityPositionList.get(0));
-        System.out.println("Max Humidity Index: " + minimumMaximumHumidityPositionList.get(1));
-        System.out.println();
-
         CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Temperature",
                 minimumMaximumTemperaturePositionList));
+
         CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Humidity",
                 minimumMaximumHumidityPositionList));
