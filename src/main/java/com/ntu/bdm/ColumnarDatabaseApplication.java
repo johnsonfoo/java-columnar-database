@@ -90,6 +90,11 @@ public class ColumnarDatabaseApplication {
       for (Month month : Month.values()) {
         List<Integer> positionList = findFromDiskIndexFiles(STATION, year, String.valueOf(month));
 
+        List<List<Integer>> minimumMaximumTemperaturePositionList = getMinimumMaximumPositionListFromDiskColumnFile(
+            "Temperature", positionList);
+
+        List<List<Integer>> minimumMaximumHumidityPositionList = getMinimumMaximumPositionListFromDiskColumnFile(
+            "Humidity", positionList);
       }
     }
   }
@@ -261,6 +266,53 @@ public class ColumnarDatabaseApplication {
     }
 
     return positionList;
+  }
+
+  public static List<List<Integer>> getMinimumMaximumPositionListFromDiskColumnFile(
+      String columnName, List<Integer> positionList) {
+    List<Integer> minimumPositionList = new ArrayList<>();
+    List<Integer> maximumPositionList = new ArrayList<>();
+
+    if (positionList.size() == 0) {
+      return List.of(minimumPositionList, maximumPositionList);
+    }
+
+    String columnFilePath = DISK_COLUMN_STORAGE_PATH + columnName + ".csv";
+    List<String[]> csvRows = CSVFileUtil.readDataAtOnce(columnFilePath);
+
+    String[] csvRow = csvRows.get(positionList.get(0));
+
+    Double minimum = Double.valueOf(csvRow[1]);
+    Double maximum = Double.valueOf(csvRow[1]);
+
+    for (Integer position : positionList) {
+
+      csvRow = csvRows.get(position);
+
+      if (csvRow[1].equals(EMPTY_DATA_SYMBOL)) {
+        continue;
+      }
+
+      Double current = Double.valueOf(csvRow[1]);
+
+      if (current < minimum) {
+        minimum = current;
+        minimumPositionList.clear();
+        minimumPositionList.add(position);
+      } else if (current.equals(minimum)) {
+        minimumPositionList.add(position);
+      }
+
+      if (current > maximum) {
+        maximum = current;
+        maximumPositionList.clear();
+        maximumPositionList.add(position);
+      } else if (current.equals(maximum)) {
+        maximumPositionList.add(position);
+      }
+    }
+
+    return List.of(minimumPositionList, maximumPositionList);
   }
 
   public static void readCommandLineParameters(String[] args) {
