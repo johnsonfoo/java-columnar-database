@@ -237,15 +237,11 @@ public class DiskDatabase {
       List<String[]> timestampColumnRows, List<String[]> columnRows) {
     String date = TimestampUtil.parseAndGetDate(timestampColumnRows.get(position)[1]);
     String fieldValue = String.valueOf(columnRows.get(position)[1]);
-    String[] newRow = {date, station, category, fieldValue};
-    return newRow;
+    return new String[]{date, station, category, fieldValue};
   }
 
   private boolean checkNewRowIsDifferent(List<String[]> minMaxRows, String[] newRow) {
     int currentSize = minMaxRows.size();
-    if (currentSize > 0 && Arrays.equals(newRow, minMaxRows.get(currentSize - 1))) {
-      return false;
-    }
-    return true;
+    return currentSize <= 0 || !Arrays.equals(newRow, minMaxRows.get(currentSize - 1));
   }
 }
