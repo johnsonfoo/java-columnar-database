@@ -69,7 +69,7 @@ public class MainMemoryDatabase {
 
     for (Integer position : minPositionList) {
       String category = "Min " + fieldName;
-      String[] newRow = constructNewRow(position, fieldName, station, category);
+      String[] newRow = constructNewRow(position, station, category, fieldName);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -78,7 +78,7 @@ public class MainMemoryDatabase {
 
     for (Integer position : maxPositionList) {
       String category = "Max " + fieldName;
-      String[] newRow = constructNewRow(position, fieldName, station, category);
+      String[] newRow = constructNewRow(position, station, category, fieldName);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -92,10 +92,7 @@ public class MainMemoryDatabase {
       String month) {
     List<Integer> positionList = getPositionList(station, year, month);
 
-    List<List<Integer>> minMaxPositionList = columnVectorManager.getMinMaxPositionListByFieldName(
-        fieldName, positionList);
-
-    return minMaxPositionList;
+    return columnVectorManager.getMinMaxPositionListByFieldName(fieldName, positionList);
   }
 
   private List<Integer> getPositionList(String station, String year, String month) {
@@ -107,21 +104,17 @@ public class MainMemoryDatabase {
     return columnIndexManager.findByFieldNamesAndCategories(queryParameters);
   }
 
-  private String[] constructNewRow(Integer position, String fieldName, String station,
-      String category) {
+  private String[] constructNewRow(Integer position, String station, String category,
+      String fieldName) {
     String date = TimestampUtil.parseAndGetDate(
         columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
     String fieldValue = String.valueOf(
         columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
-    String[] newRow = {date, station, category, fieldValue};
-    return newRow;
+    return new String[]{date, station, category, fieldValue};
   }
 
   private boolean checkNewRowIsDifferent(List<String[]> minMaxRows, String[] newRow) {
     int currentSize = minMaxRows.size();
-    if (currentSize > 0 && Arrays.equals(newRow, minMaxRows.get(currentSize - 1))) {
-      return false;
-    }
-    return true;
+    return currentSize <= 0 || !Arrays.equals(newRow, minMaxRows.get(currentSize - 1));
   }
 }
