@@ -49,15 +49,15 @@ public class ColumnVectorManager {
 
   public List<List<Integer>> getMinMaxPositionListByFieldName(String fieldName,
       List<Integer> positionList) {
-    ColumnVector<Double> doubleColumnVector = doubleColumnVectors.get(fieldName);
-    List<Double> dataVector = doubleColumnVector.getDataVector();
-
     List<Integer> minPositionList = new ArrayList<>();
     List<Integer> maxPositionList = new ArrayList<>();
 
     if (positionList.size() == 0) {
       return List.of(minPositionList, maxPositionList);
     }
+
+    ColumnVector<Double> doubleColumnVector = doubleColumnVectors.get(fieldName);
+    List<Double> dataVector = doubleColumnVector.getDataVector();
 
     Double minimum = dataVector.get(positionList.get(0));
     Double maximum = dataVector.get(positionList.get(0));
