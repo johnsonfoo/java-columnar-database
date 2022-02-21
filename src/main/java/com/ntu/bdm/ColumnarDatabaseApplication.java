@@ -7,7 +7,6 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -46,38 +45,8 @@ public class ColumnarDatabaseApplication {
     CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
     if (!DISK_STORAGE) {
-      mainMemoryStorage(columnVectorManager, columnIndexManager);
     } else {
       diskStorage(columnVectorManager, columnIndexManager);
-    }
-  }
-
-  public static void mainMemoryStorage(ColumnVectorManager columnVectorManager,
-      ColumnIndexManager columnIndexManager) {
-    for (String year : YEARS) {
-      for (Month month : Month.values()) {
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put("Station", STATION);
-        queryParameters.put("Year", year);
-        queryParameters.put("Month", String.valueOf(month));
-
-        List<Integer> positionList = columnIndexManager.findByFieldNamesAndCategories(
-            queryParameters);
-
-        List<List<Integer>> minimumMaximumTemperaturePositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
-            "Temperature", positionList);
-
-        List<List<Integer>> minimumMaximumHumidityPositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
-            "Humidity", positionList);
-
-        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-            getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Temperature",
-                minimumMaximumTemperaturePositionList));
-
-        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-            getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Humidity",
-                minimumMaximumHumidityPositionList));
-      }
     }
   }
 
@@ -206,52 +175,6 @@ public class ColumnarDatabaseApplication {
       String outputFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + category + ".txt";
       FileUtil.writeBytesToFile(outputFilePath, bytes);
     }
-  }
-
-  public static List<String[]> getMinimumMaximumRowsWithDistinctDates(
-      ColumnVectorManager columnVectorManager,
-      String fieldName, List<List<Integer>> minimumMaximumPositionList) {
-    String station = STATION;
-    List<Integer> minimumPositionList = minimumMaximumPositionList.get(0);
-    List<Integer> maximumPositionList = minimumMaximumPositionList.get(1);
-
-    List<String[]> minimumMaximumRows = new ArrayList<>();
-
-    for (Integer position : minimumPositionList) {
-      String date = TimestampUtil.parseAndGetDate(
-          columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
-      String category = "Min " + fieldName;
-      String fieldValue = String.valueOf(
-          columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
-
-      int currentSize = minimumMaximumRows.size();
-      String[] newRow = {date, station, category, fieldValue};
-
-      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
-        continue;
-      }
-
-      minimumMaximumRows.add(newRow);
-    }
-
-    for (Integer position : maximumPositionList) {
-      String date = TimestampUtil.parseAndGetDate(
-          columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
-      String category = "Max " + fieldName;
-      String fieldValue = String.valueOf(
-          columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
-
-      int currentSize = minimumMaximumRows.size();
-      String[] newRow = {date, station, category, fieldValue};
-
-      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
-        continue;
-      }
-
-      minimumMaximumRows.add(newRow);
-    }
-
-    return minimumMaximumRows;
   }
 
   public static List<Integer> findFromDiskIndexFiles(String station, String year, String month) {
