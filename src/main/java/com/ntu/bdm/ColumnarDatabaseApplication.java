@@ -95,6 +95,14 @@ public class ColumnarDatabaseApplication {
 
         List<List<Integer>> minimumMaximumHumidityPositionList = getMinimumMaximumPositionListFromDiskColumnFile(
             "Humidity", positionList);
+
+        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+            getMinimumMaximumRowsWithDistinctDatesFromDiskColumnFile("Temperature",
+                minimumMaximumTemperaturePositionList));
+
+        CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+            getMinimumMaximumRowsWithDistinctDatesFromDiskColumnFile("Humidity",
+                minimumMaximumHumidityPositionList));
       }
     }
   }
@@ -313,6 +321,53 @@ public class ColumnarDatabaseApplication {
     }
 
     return List.of(minimumPositionList, maximumPositionList);
+  }
+
+  public static List<String[]> getMinimumMaximumRowsWithDistinctDatesFromDiskColumnFile(
+      String columnName, List<List<Integer>> minimumMaximumPositionList) {
+    String station = STATION;
+    List<Integer> minimumPositionList = minimumMaximumPositionList.get(0);
+    List<Integer> maximumPositionList = minimumMaximumPositionList.get(1);
+
+    List<String[]> minimumMaximumRows = new ArrayList<>();
+
+    String timestampFilePath = DISK_COLUMN_STORAGE_PATH + "Timestamp.csv";
+    List<String[]> timestampCsvRows = CSVFileUtil.readDataAtOnce(timestampFilePath);
+
+    String columnFilePath = DISK_COLUMN_STORAGE_PATH + columnName + ".csv";
+    List<String[]> csvRows = CSVFileUtil.readDataAtOnce(columnFilePath);
+
+    for (Integer position : minimumPositionList) {
+      String date = TimestampUtil.parseAndGetDate(timestampCsvRows.get(position)[1]);
+      String category = "Min " + columnName;
+      String columnValue = String.valueOf(csvRows.get(position)[1]);
+
+      int currentSize = minimumMaximumRows.size();
+      String[] newRow = {date, station, category, columnValue};
+
+      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
+        continue;
+      }
+
+      minimumMaximumRows.add(newRow);
+    }
+
+    for (Integer position : maximumPositionList) {
+      String date = TimestampUtil.parseAndGetDate(timestampCsvRows.get(position)[1]);
+      String category = "Max " + columnName;
+      String columnValue = String.valueOf(csvRows.get(position)[1]);
+
+      int currentSize = minimumMaximumRows.size();
+      String[] newRow = {date, station, category, columnValue};
+
+      if (currentSize > 0 && Arrays.equals(newRow, minimumMaximumRows.get(currentSize - 1))) {
+        continue;
+      }
+
+      minimumMaximumRows.add(newRow);
+    }
+
+    return minimumMaximumRows;
   }
 
   public static void readCommandLineParameters(String[] args) {
