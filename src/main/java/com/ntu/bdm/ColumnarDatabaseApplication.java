@@ -88,23 +88,8 @@ public class ColumnarDatabaseApplication {
 
     for (String year : YEARS) {
       for (Month month : Month.values()) {
-        String stationFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + STATION + ".txt";
-        String yearFilePath = DISK_INDEX_STORAGE_PATH + "/year/" + year + ".txt";
-        String monthFilePath = DISK_INDEX_STORAGE_PATH + "/month/" + String.valueOf(month) + ".txt";
+        List<Integer> positionList = findFromDiskIndexFiles(STATION, year, String.valueOf(month));
 
-        BitSet stationBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(stationFilePath));
-        BitSet yearBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(yearFilePath));
-        BitSet monthBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(monthFilePath));
-
-        BitSet resultBitmap = (BitSet) stationBitmap.clone();
-        resultBitmap.and(yearBitmap);
-        resultBitmap.and(monthBitmap);
-
-        List<Integer> positionList = new ArrayList<>();
-
-        for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
-          positionList.add(i);
-        }
       }
     }
   }
@@ -254,6 +239,28 @@ public class ColumnarDatabaseApplication {
     }
 
     return minimumMaximumRows;
+  }
+
+  public static List<Integer> findFromDiskIndexFiles(String station, String year, String month) {
+    List<Integer> positionList = new ArrayList<>();
+
+    String stationFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + station + ".txt";
+    String yearFilePath = DISK_INDEX_STORAGE_PATH + "/year/" + year + ".txt";
+    String monthFilePath = DISK_INDEX_STORAGE_PATH + "/month/" + month + ".txt";
+
+    BitSet stationBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(stationFilePath));
+    BitSet yearBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(yearFilePath));
+    BitSet monthBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(monthFilePath));
+
+    BitSet resultBitmap = (BitSet) stationBitmap.clone();
+    resultBitmap.and(yearBitmap);
+    resultBitmap.and(monthBitmap);
+
+    for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
+      positionList.add(i);
+    }
+
+    return positionList;
   }
 
   public static void readCommandLineParameters(String[] args) {
