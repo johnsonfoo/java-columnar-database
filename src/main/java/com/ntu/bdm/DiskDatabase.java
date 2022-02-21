@@ -117,6 +117,14 @@ public class DiskDatabase {
     }
   }
 
+  public void clearColumnVectorManagerContents() {
+    columnVectorManager = null;
+  }
+
+  public void clearColumnIndexManagerContents() {
+    columnIndexManager = null;
+  }
+
   public List<String[]> getMinMaxRowsWithDistinctDate(String fieldName,
       String station, String year, String month) {
     List<String[]> minMaxRows = new ArrayList<>();
