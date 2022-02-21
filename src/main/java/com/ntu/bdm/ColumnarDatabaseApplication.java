@@ -36,19 +36,21 @@ public class ColumnarDatabaseApplication {
     readCommandLineParameters(args);
     initialiseStationAndYears();
 
-    if (!DISK_STORAGE) {
-      mainMemoryStorage();
-    }
-  }
-
-  public static void mainMemoryStorage() {
     ColumnVectorManager columnVectorManager = createColumnVectorsFromCsv();
     populateColumnVectorsFromCsv(columnVectorManager, CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
+
     ColumnIndexManager columnIndexManager = new ColumnIndexManager();
     createCategoricalColumnIndexes(columnVectorManager, columnIndexManager);
 
     CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
+    if (!DISK_STORAGE) {
+      mainMemoryStorage(columnVectorManager, columnIndexManager);
+    }
+  }
+
+  public static void mainMemoryStorage(ColumnVectorManager columnVectorManager,
+      ColumnIndexManager columnIndexManager) {
     for (String year : YEARS) {
       for (Month month : Month.values()) {
         Map<String, String> queryParameters = new HashMap<>();
