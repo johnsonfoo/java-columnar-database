@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class ColumnVectorManager {
 
-  private Map<String, CategoricalColumnVector<String>> categoricalColumnVectors;
-  private Map<String, ColumnVector<Double>> doubleColumnVectors;
-  private Map<String, ColumnVector<String>> stringColumnVectors;
+  private final Map<String, CategoricalColumnVector<String>> categoricalColumnVectors;
+  private final Map<String, ColumnVector<Double>> doubleColumnVectors;
+  private final Map<String, ColumnVector<String>> stringColumnVectors;
 
   public ColumnVectorManager() {
     categoricalColumnVectors = new HashMap<>();
@@ -47,24 +47,16 @@ public class ColumnVectorManager {
     return categoricalColumnVectors;
   }
 
-  public Map<String, ColumnVector<Double>> getDoubleColumnVectors() {
-    return doubleColumnVectors;
-  }
-
-  public Map<String, ColumnVector<String>> getStringColumnVectors() {
-    return stringColumnVectors;
-  }
-
-  public List<List<Integer>> getMinimumMaximumPositionListByFieldName(String fieldName,
+  public List<List<Integer>> getMinMaxPositionListByFieldName(String fieldName,
       List<Integer> positionList) {
     ColumnVector<Double> doubleColumnVector = doubleColumnVectors.get(fieldName);
     List<Double> dataVector = doubleColumnVector.getDataVector();
 
-    List<Integer> minimumPositionList = new ArrayList<>();
-    List<Integer> maximumPositionList = new ArrayList<>();
+    List<Integer> minPositionList = new ArrayList<>();
+    List<Integer> maxPositionList = new ArrayList<>();
 
     if (positionList.size() == 0) {
-      return List.of(minimumPositionList, maximumPositionList);
+      return List.of(minPositionList, maxPositionList);
     }
 
     Double minimum = dataVector.get(positionList.get(0));
@@ -80,22 +72,22 @@ public class ColumnVectorManager {
 
       if (current < minimum) {
         minimum = current;
-        minimumPositionList.clear();
-        minimumPositionList.add(position);
+        minPositionList.clear();
+        minPositionList.add(position);
       } else if (current.equals(minimum)) {
-        minimumPositionList.add(position);
+        minPositionList.add(position);
       }
 
       if (current > maximum) {
         maximum = current;
-        maximumPositionList.clear();
-        maximumPositionList.add(position);
+        maxPositionList.clear();
+        maxPositionList.add(position);
       } else if (current.equals(maximum)) {
-        maximumPositionList.add(position);
+        maxPositionList.add(position);
       }
     }
 
-    return List.of(minimumPositionList, maximumPositionList);
+    return List.of(minPositionList, maxPositionList);
   }
 
   public Double getDoubleByFieldNameAndPosition(String fieldName, Integer position) {

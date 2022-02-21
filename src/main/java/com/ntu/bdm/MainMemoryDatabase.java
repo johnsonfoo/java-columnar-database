@@ -92,7 +92,7 @@ public class MainMemoryDatabase {
       String month) {
     List<Integer> positionList = getPositionList(station, year, month);
 
-    List<List<Integer>> minMaxPositionList = columnVectorManager.getMinimumMaximumPositionListByFieldName(
+    List<List<Integer>> minMaxPositionList = columnVectorManager.getMinMaxPositionListByFieldName(
         fieldName, positionList);
 
     return minMaxPositionList;
