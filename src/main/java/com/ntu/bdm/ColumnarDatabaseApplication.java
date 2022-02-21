@@ -28,6 +28,7 @@ public class ColumnarDatabaseApplication {
   public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
+  public static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
 
   public static void main(String[] args) {
     readCommandLineParameters(args);
@@ -125,6 +126,29 @@ public class ColumnarDatabaseApplication {
       ColumnIndexManager columnIndexManager) {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
+  }
+
+  public static void outputColumnVectorsToCsv(ColumnVectorManager columnVectorManager) {
+    String timestampFilePath = DISK_COLUMN_STORAGE_PATH + "Timestamp.csv";
+    String[] timestampFileHeader = new String[]{"id", "Timestamp"};
+    String temperatureFilePath = DISK_COLUMN_STORAGE_PATH + "Temperature.csv";
+    String[] temperatureFileHeader = new String[]{"id", "Temperature"};
+    String humidityFilePath = DISK_COLUMN_STORAGE_PATH + "Humidity.csv";
+    String[] humidityFileHeader = new String[]{"id", "Humidity"};
+
+    CSVFileUtil.writeHeader(timestampFilePath, timestampFileHeader);
+    CSVFileUtil.writeDataAtOnce(timestampFilePath,
+        columnVectorManager.serialiseStringColumnVectorByFieldName("Timestamp"));
+
+    CSVFileUtil.writeHeader(temperatureFilePath, temperatureFileHeader);
+    CSVFileUtil.writeDataAtOnce(temperatureFilePath,
+        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Temperature",
+            EMPTY_DATA_SYMBOL));
+
+    CSVFileUtil.writeHeader(humidityFilePath, humidityFileHeader);
+    CSVFileUtil.writeDataAtOnce(humidityFilePath,
+        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Humidity",
+            EMPTY_DATA_SYMBOL));
   }
 
   public static List<String[]> getMinimumMaximumRowsWithDistinctDates(
