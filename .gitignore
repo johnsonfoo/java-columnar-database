@@ -80,3 +80,6 @@ buildNumber.properties
 
 ### Intellij ###
 .idea
+
+### Data ###
+disk/
