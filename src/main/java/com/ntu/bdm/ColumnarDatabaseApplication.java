@@ -1,6 +1,7 @@
 package com.ntu.bdm;
 
 import com.ntu.bdm.util.CSVFileUtil;
+import com.ntu.bdm.util.FileUtil;
 import com.ntu.bdm.util.TimestampUtil;
 import java.time.Month;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class ColumnarDatabaseApplication {
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
   public static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
+  public static final String DISK_INDEX_STORAGE_PATH = "disk/index/";
 
   public static void main(String[] args) {
     readCommandLineParameters(args);
@@ -149,6 +151,38 @@ public class ColumnarDatabaseApplication {
     CSVFileUtil.writeDataAtOnce(humidityFilePath,
         columnVectorManager.serialiseDoubleColumnVectorByFieldName("Humidity",
             EMPTY_DATA_SYMBOL));
+  }
+
+  public static void outputCategoricalColumnIndexesToTxt(ColumnIndexManager columnIndexManager) {
+    Map<String, byte[]> serialisedYear = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+        "Year");
+
+    for (Map.Entry<String, byte[]> entry : serialisedYear.entrySet()) {
+      String category = entry.getKey();
+      byte[] bytes = entry.getValue();
+      String outputFilePath = DISK_INDEX_STORAGE_PATH + "/year/" + category + ".txt";
+      FileUtil.writeBytesToFile(outputFilePath, bytes);
+    }
+
+    Map<String, byte[]> serialisedMonth = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+        "Month");
+
+    for (Map.Entry<String, byte[]> entry : serialisedMonth.entrySet()) {
+      String category = entry.getKey();
+      byte[] bytes = entry.getValue();
+      String outputFilePath = DISK_INDEX_STORAGE_PATH + "/month/" + category + ".txt";
+      FileUtil.writeBytesToFile(outputFilePath, bytes);
+    }
+
+    Map<String, byte[]> serialisedStation = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+        "Station");
+
+    for (Map.Entry<String, byte[]> entry : serialisedStation.entrySet()) {
+      String category = entry.getKey();
+      byte[] bytes = entry.getValue();
+      String outputFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + category + ".txt";
+      FileUtil.writeBytesToFile(outputFilePath, bytes);
+    }
   }
 
   public static List<String[]> getMinimumMaximumRowsWithDistinctDates(
