@@ -28,6 +28,7 @@ public class ColumnarDatabaseApplication {
   public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
+  public static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
 
   public static void main(String[] args) {
     readCommandLineParameters(args);
@@ -128,11 +129,11 @@ public class ColumnarDatabaseApplication {
   }
 
   public static void outputColumnVectorsToCsv(ColumnVectorManager columnVectorManager) {
-    String timestampFilePath = "Timestamp.csv";
+    String timestampFilePath = DISK_COLUMN_STORAGE_PATH + "Timestamp.csv";
     String[] timestampFileHeader = new String[]{"id", "Timestamp"};
-    String temperatureFilePath = "Temperature.csv";
+    String temperatureFilePath = DISK_COLUMN_STORAGE_PATH + "Temperature.csv";
     String[] temperatureFileHeader = new String[]{"id", "Temperature"};
-    String humidityFilePath = "Humidity.csv";
+    String humidityFilePath = DISK_COLUMN_STORAGE_PATH + "Humidity.csv";
     String[] humidityFileHeader = new String[]{"id", "Humidity"};
 
     CSVFileUtil.writeHeader(timestampFilePath, timestampFileHeader);
