@@ -6,6 +6,7 @@ import com.ntu.bdm.util.TimestampUtil;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ public class ColumnarDatabaseApplication {
 
     if (!DISK_STORAGE) {
       mainMemoryStorage(columnVectorManager, columnIndexManager);
+    } else {
+      diskStorage(columnVectorManager, columnIndexManager);
     }
   }
 
@@ -74,6 +77,34 @@ public class ColumnarDatabaseApplication {
         CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
             getMinimumMaximumRowsWithDistinctDates(columnVectorManager, "Humidity",
                 minimumMaximumHumidityPositionList));
+      }
+    }
+  }
+
+  public static void diskStorage(ColumnVectorManager columnVectorManager,
+      ColumnIndexManager columnIndexManager) {
+    outputColumnVectorsToCsv(columnVectorManager);
+    outputCategoricalColumnIndexesToTxt(columnIndexManager);
+
+    for (String year : YEARS) {
+      for (Month month : Month.values()) {
+        String stationFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + STATION + ".txt";
+        String yearFilePath = DISK_INDEX_STORAGE_PATH + "/year/" + year + ".txt";
+        String monthFilePath = DISK_INDEX_STORAGE_PATH + "/month/" + String.valueOf(month) + ".txt";
+
+        BitSet stationBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(stationFilePath));
+        BitSet yearBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(yearFilePath));
+        BitSet monthBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(monthFilePath));
+
+        BitSet resultBitmap = (BitSet) stationBitmap.clone();
+        resultBitmap.and(yearBitmap);
+        resultBitmap.and(monthBitmap);
+
+        List<Integer> positionList = new ArrayList<>();
+
+        for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
+          positionList.add(i);
+        }
       }
     }
   }
