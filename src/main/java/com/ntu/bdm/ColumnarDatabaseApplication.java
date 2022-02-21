@@ -1,6 +1,7 @@
 package com.ntu.bdm;
 
 import com.ntu.bdm.util.CSVFileUtil;
+import java.time.Month;
 import java.util.stream.IntStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -31,7 +32,43 @@ public class ColumnarDatabaseApplication {
     CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
     if (!DISK_STORAGE) {
+      MainMemoryDatabase mainMemoryDatabase = new MainMemoryDatabase();
+      mainMemoryDatabase.initialiseColumnVectors();
+      mainMemoryDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
+      mainMemoryDatabase.createCategoricalColumnIndexes();
+
+      for (String year : YEARS) {
+        for (Month month : Month.values()) {
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year,
+                  String.valueOf(month)));
+
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year,
+                  String.valueOf(month)));
+        }
+      }
     } else {
+      DiskDatabase diskDatabase = new DiskDatabase();
+      diskDatabase.initialiseColumnVectors();
+      diskDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
+      diskDatabase.createCategoricalColumnIndexes();
+      diskDatabase.writeColumnVectorsToDisk();
+      diskDatabase.writeCategoricalColumnIndexesToDisk();
+      diskDatabase.clearColumnVectorManagerContents();
+      diskDatabase.clearColumnIndexManagerContents();
+
+      for (String year : YEARS) {
+        for (Month month : Month.values()) {
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              diskDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year,
+                  String.valueOf(month)));
+
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              diskDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year,
+                  String.valueOf(month)));
+        }
+      }
     }
   }
 
