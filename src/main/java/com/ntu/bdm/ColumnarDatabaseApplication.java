@@ -2,6 +2,7 @@ package com.ntu.bdm;
 
 import com.ntu.bdm.util.CSVFileUtil;
 import java.time.Month;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -17,6 +18,7 @@ public class ColumnarDatabaseApplication {
   public static String MATRICULATION_NUMBER;
   public static String STATION;
   public static String[] YEARS;
+  public static String[] MONTHS;
   public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
   public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
@@ -24,7 +26,7 @@ public class ColumnarDatabaseApplication {
 
   public static void main(String[] args) {
     readCommandLineParameters(args);
-    initialiseStationAndYears();
+    initialiseStationAndYearsAndMonths();
 
     CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
@@ -35,14 +37,13 @@ public class ColumnarDatabaseApplication {
       mainMemoryDatabase.createCategoricalColumnIndexes();
 
       for (String year : YEARS) {
-        for (Month month : Month.values()) {
+        for (String month : MONTHS) {
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year,
-                  String.valueOf(month)));
+                  month));
 
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year,
-                  String.valueOf(month)));
+              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year, month));
         }
       }
     } else {
@@ -56,14 +57,12 @@ public class ColumnarDatabaseApplication {
       diskDatabase.clearColumnIndexManagerContents();
 
       for (String year : YEARS) {
-        for (Month month : Month.values()) {
+        for (String month : MONTHS) {
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              diskDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year,
-                  String.valueOf(month)));
+              diskDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year, month));
 
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              diskDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year,
-                  String.valueOf(month)));
+              diskDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year, month));
         }
       }
     }
@@ -105,7 +104,7 @@ public class ColumnarDatabaseApplication {
     }
   }
 
-  public static void initialiseStationAndYears() {
+  public static void initialiseStationAndYearsAndMonths() {
     String matriculationNumber = MATRICULATION_NUMBER;
     int length = matriculationNumber.length();
 
@@ -116,5 +115,7 @@ public class ColumnarDatabaseApplication {
 
     YEARS = IntStream.range(2002, 2022).filter(i -> i % 10 == lastDigit)
         .mapToObj(String::valueOf).toArray(String[]::new);
+
+    MONTHS = Arrays.stream(Month.values()).map(String::valueOf).toArray(String[]::new);
   }
 }
