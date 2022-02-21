@@ -13,17 +13,14 @@ import org.apache.commons.cli.ParseException;
 
 public class ColumnarDatabaseApplication {
 
-  public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
-  public static final String EMPTY_DATA_SYMBOL = "M";
   public static Boolean DISK_STORAGE = false;
   public static String MATRICULATION_NUMBER;
   public static String STATION;
   public static String[] YEARS;
+  public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
   public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
-  public static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
-  public static final String DISK_INDEX_STORAGE_PATH = "disk/index/";
 
   public static void main(String[] args) {
     readCommandLineParameters(args);
