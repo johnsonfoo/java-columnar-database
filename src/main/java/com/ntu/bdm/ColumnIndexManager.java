@@ -35,18 +35,18 @@ public class ColumnIndexManager {
     return categoricalColumnIndexes;
   }
 
-  public BitSet findBitmapByFieldNameAndCategory(String fieldName, String category) {
+  public BitSet getBitmapForFieldWithCategory(String fieldName, String category) {
     return categoricalColumnIndexes.get(fieldName).getBitmapIndex().get(category);
   }
 
-  public List<Integer> findByFieldNamesAndCategories(Map<String, String> queryParameters) {
+  public List<Integer> getPositionListMatchingQueryParams(Map<String, String> queryParams) {
     BitSet resultBitmap = null;
     List<Integer> positionList = new ArrayList<>();
 
-    for (Map.Entry<String, String> entry : queryParameters.entrySet()) {
+    for (Map.Entry<String, String> entry : queryParams.entrySet()) {
       String fieldName = entry.getKey();
       String category = entry.getValue();
-      BitSet bitmap = findBitmapByFieldNameAndCategory(fieldName, category);
+      BitSet bitmap = getBitmapForFieldWithCategory(fieldName, category);
 
       if (bitmap == null) {
         return positionList;
@@ -69,7 +69,7 @@ public class ColumnIndexManager {
     return positionList;
   }
 
-  public Map<String, byte[]> serialiseCategoricalColumnIndexByFieldName(String fieldName) {
+  public Map<String, byte[]> serialiseCategoricalColumnIndex(String fieldName) {
     Map<String, byte[]> serialisedCategoricalColumnIndex = new HashMap<>();
 
     CategoricalColumnIndex<String> categoricalColumnIndex = categoricalColumnIndexes.get(fieldName);
