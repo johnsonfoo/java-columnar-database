@@ -47,7 +47,7 @@ public class ColumnVectorManager {
     return categoricalColumnVectors;
   }
 
-  public List<List<Integer>> getMinMaxPositionListByFieldName(String fieldName,
+  public List<List<Integer>> getMinMaxPositionListForFieldFromPositionList(String fieldName,
       List<Integer> positionList) {
     List<Integer> minPositionList = new ArrayList<>();
     List<Integer> maxPositionList = new ArrayList<>();
@@ -90,16 +90,15 @@ public class ColumnVectorManager {
     return List.of(minPositionList, maxPositionList);
   }
 
-  public Double getDoubleByFieldNameAndPosition(String fieldName, Integer position) {
+  public Double getDoubleForFieldWithPosition(String fieldName, Integer position) {
     return doubleColumnVectors.get(fieldName).get(position);
   }
 
-  public String getStringByFieldNameAndPosition(String fieldName, Integer position) {
+  public String getStringForFieldWithPosition(String fieldName, Integer position) {
     return stringColumnVectors.get(fieldName).get(position);
   }
 
-  public List<String[]> serialiseDoubleColumnVectorByFieldName(String fieldName,
-      String emptyDataSymbol) {
+  public List<String[]> serialiseDoubleColumnVector(String fieldName, String emptyDataSymbol) {
     List<String[]> serialisedDoubleColumnVector = new ArrayList<>();
 
     ColumnVector<Double> doubleColumnVector = doubleColumnVectors.get(fieldName);
@@ -117,7 +116,7 @@ public class ColumnVectorManager {
     return serialisedDoubleColumnVector;
   }
 
-  public List<String[]> serialiseStringColumnVectorByFieldName(String fieldName) {
+  public List<String[]> serialiseStringColumnVector(String fieldName) {
     List<String[]> serialisedStringColumnVector = new ArrayList<>();
 
     ColumnVector<String> stringColumnVector = stringColumnVectors.get(fieldName);
