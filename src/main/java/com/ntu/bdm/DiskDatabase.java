@@ -1,5 +1,7 @@
 package com.ntu.bdm;
 
+import com.ntu.bdm.manager.ColumnIndexManager;
+import com.ntu.bdm.manager.ColumnVectorManager;
 import com.ntu.bdm.util.CSVFileUtil;
 import com.ntu.bdm.util.FileUtil;
 import com.ntu.bdm.util.TimestampUtil;
