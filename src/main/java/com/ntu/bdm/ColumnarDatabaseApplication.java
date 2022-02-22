@@ -3,6 +3,8 @@ package com.ntu.bdm;
 import com.ntu.bdm.util.CSVFileUtil;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -38,12 +40,18 @@ public class ColumnarDatabaseApplication {
 
       for (String year : YEARS) {
         for (String month : MONTHS) {
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year,
-                  month));
+          Map<String, String> queryParams = new HashMap<>();
+          queryParams.put("Station", STATION);
+          queryParams.put("Year", year);
+          queryParams.put("Month", month);
 
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              mainMemoryDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year, month));
+              mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
+                  "Temperature", queryParams));
+
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
+                  "Humidity", queryParams));
         }
       }
     } else {
@@ -58,11 +66,18 @@ public class ColumnarDatabaseApplication {
 
       for (String year : YEARS) {
         for (String month : MONTHS) {
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              diskDatabase.getMinMaxRowsWithDistinctDate("Temperature", STATION, year, month));
+          Map<String, String> queryParams = new HashMap<>();
+          queryParams.put("Station", STATION);
+          queryParams.put("Year", year);
+          queryParams.put("Month", month);
 
           CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
-              diskDatabase.getMinMaxRowsWithDistinctDate("Humidity", STATION, year, month));
+              diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Temperature",
+                  queryParams));
+
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+              diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Humidity",
+                  queryParams));
         }
       }
     }
