@@ -22,7 +22,8 @@ public class ColumnarDatabaseApplication {
   public static String[] YEARS;
   public static String[] MONTHS;
   public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
-  public static final String OUTPUT_FILE_PATH = "ScanResult.csv";
+  public static final String MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH = "ScanResultMainMemory.csv";
+  public static final String DISK_DATABASE_OUTPUT_FILE_PATH = "ScanResultDisk.csv";
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
 
@@ -30,13 +31,13 @@ public class ColumnarDatabaseApplication {
     readCommandLineParameters(args);
     initialiseStationAndYearsAndMonths();
 
-    CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
-
     if (!DISK_STORAGE) {
       MainMemoryDatabase mainMemoryDatabase = new MainMemoryDatabase();
       mainMemoryDatabase.initialiseColumnVectors();
       mainMemoryDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
       mainMemoryDatabase.createCategoricalColumnIndexes();
+
+      CSVFileUtil.writeHeader(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
       for (String year : YEARS) {
         for (String month : MONTHS) {
@@ -45,11 +46,11 @@ public class ColumnarDatabaseApplication {
           queryParams.put("Year", year);
           queryParams.put("Month", month);
 
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Temperature", queryParams));
 
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Humidity", queryParams));
         }
@@ -64,6 +65,8 @@ public class ColumnarDatabaseApplication {
       diskDatabase.clearColumnVectorManagerContents();
       diskDatabase.clearColumnIndexManagerContents();
 
+      CSVFileUtil.writeHeader(DISK_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
+
       for (String year : YEARS) {
         for (String month : MONTHS) {
           Map<String, String> queryParams = new HashMap<>();
@@ -71,11 +74,11 @@ public class ColumnarDatabaseApplication {
           queryParams.put("Year", year);
           queryParams.put("Month", month);
 
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Temperature",
                   queryParams));
 
-          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Humidity",
                   queryParams));
         }
