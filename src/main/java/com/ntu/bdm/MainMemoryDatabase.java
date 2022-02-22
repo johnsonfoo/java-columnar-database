@@ -3,7 +3,6 @@ package com.ntu.bdm;
 import com.ntu.bdm.util.TimestampUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,17 +58,18 @@ public class MainMemoryDatabase {
         columnVectorManager.getCategoricalColumnVectors());
   }
 
-  public List<String[]> getMinMaxRowsWithDistinctDate(String fieldName,
-      String station, String year, String month) {
+  public List<String[]> getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(String fieldName,
+      Map<String, String> queryParams) {
     List<String[]> minMaxRows = new ArrayList<>();
 
-    List<List<Integer>> minMaxPositionList = getMinMaxPositionList(fieldName, station, year, month);
+    List<List<Integer>> minMaxPositionList = getMinMaxPositionListForFieldMatchingQueryParams(
+        fieldName, queryParams);
     List<Integer> minPositionList = minMaxPositionList.get(0);
     List<Integer> maxPositionList = minMaxPositionList.get(1);
 
     for (Integer position : minPositionList) {
       String category = "Min " + fieldName;
-      String[] newRow = constructNewRow(position, station, category, fieldName);
+      String[] newRow = constructNewRow(position, queryParams.get("Station"), category, fieldName);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -78,7 +78,7 @@ public class MainMemoryDatabase {
 
     for (Integer position : maxPositionList) {
       String category = "Max " + fieldName;
-      String[] newRow = constructNewRow(position, station, category, fieldName);
+      String[] newRow = constructNewRow(position, queryParams.get("Station"), category, fieldName);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -88,28 +88,24 @@ public class MainMemoryDatabase {
     return minMaxRows;
   }
 
-  private List<List<Integer>> getMinMaxPositionList(String fieldName, String station, String year,
-      String month) {
-    List<Integer> positionList = getPositionList(station, year, month);
+  private List<List<Integer>> getMinMaxPositionListForFieldMatchingQueryParams(String fieldName,
+      Map<String, String> queryParams) {
+    List<Integer> positionList = getPositionListMatchingQueryParams(queryParams);
 
-    return columnVectorManager.getMinMaxPositionListByFieldName(fieldName, positionList);
+    return columnVectorManager.getMinMaxPositionListForFieldFromPositionList(fieldName,
+        positionList);
   }
 
-  private List<Integer> getPositionList(String station, String year, String month) {
-    Map<String, String> queryParameters = new HashMap<>();
-    queryParameters.put("Station", station);
-    queryParameters.put("Year", year);
-    queryParameters.put("Month", month);
-
-    return columnIndexManager.findByFieldNamesAndCategories(queryParameters);
+  private List<Integer> getPositionListMatchingQueryParams(Map<String, String> queryParams) {
+    return columnIndexManager.getPositionListMatchingQueryParams(queryParams);
   }
 
   private String[] constructNewRow(Integer position, String station, String category,
       String fieldName) {
     String date = TimestampUtil.parseAndGetDate(
-        columnVectorManager.getStringByFieldNameAndPosition("Timestamp", position));
+        columnVectorManager.getStringForFieldWithPosition("Timestamp", position));
     String fieldValue = String.valueOf(
-        columnVectorManager.getDoubleByFieldNameAndPosition(fieldName, position));
+        columnVectorManager.getDoubleForFieldWithPosition(fieldName, position));
     return new String[]{date, station, category, fieldValue};
   }
 

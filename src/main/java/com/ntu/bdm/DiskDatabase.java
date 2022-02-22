@@ -69,14 +69,14 @@ public class DiskDatabase {
 
     CSVFileUtil.writeHeader(timestampColumnFilePath, timestampColumnFileHeader);
     CSVFileUtil.writeDataAtOnce(timestampColumnFilePath,
-        columnVectorManager.serialiseStringColumnVectorByFieldName("Timestamp"));
+        columnVectorManager.serialiseStringColumnVector("Timestamp"));
 
     String temperatureColumnFilePath = DISK_COLUMN_STORAGE_PATH + "Temperature.csv";
     String[] temperatureColumnFileHeader = new String[]{"id", "Temperature"};
 
     CSVFileUtil.writeHeader(temperatureColumnFilePath, temperatureColumnFileHeader);
     CSVFileUtil.writeDataAtOnce(temperatureColumnFilePath,
-        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Temperature",
+        columnVectorManager.serialiseDoubleColumnVector("Temperature",
             EMPTY_DATA_SYMBOL));
 
     String humidityColumnFilePath = DISK_COLUMN_STORAGE_PATH + "Humidity.csv";
@@ -84,12 +84,12 @@ public class DiskDatabase {
 
     CSVFileUtil.writeHeader(humidityColumnFilePath, humidityColumnFileHeader);
     CSVFileUtil.writeDataAtOnce(humidityColumnFilePath,
-        columnVectorManager.serialiseDoubleColumnVectorByFieldName("Humidity",
+        columnVectorManager.serialiseDoubleColumnVector("Humidity",
             EMPTY_DATA_SYMBOL));
   }
 
   public void writeCategoricalColumnIndexesToDisk() {
-    Map<String, byte[]> serialisedYear = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+    Map<String, byte[]> serialisedYear = columnIndexManager.serialiseCategoricalColumnIndex(
         "Year");
     for (Map.Entry<String, byte[]> entry : serialisedYear.entrySet()) {
       String category = entry.getKey();
@@ -98,7 +98,7 @@ public class DiskDatabase {
       FileUtil.writeBytesToFile(indexFilePath, bytes);
     }
 
-    Map<String, byte[]> serialisedMonth = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+    Map<String, byte[]> serialisedMonth = columnIndexManager.serialiseCategoricalColumnIndex(
         "Month");
     for (Map.Entry<String, byte[]> entry : serialisedMonth.entrySet()) {
       String category = entry.getKey();
@@ -107,7 +107,7 @@ public class DiskDatabase {
       FileUtil.writeBytesToFile(indexFilePath, bytes);
     }
 
-    Map<String, byte[]> serialisedStation = columnIndexManager.serialiseCategoricalColumnIndexByFieldName(
+    Map<String, byte[]> serialisedStation = columnIndexManager.serialiseCategoricalColumnIndex(
         "Station");
     for (Map.Entry<String, byte[]> entry : serialisedStation.entrySet()) {
       String category = entry.getKey();
@@ -125,11 +125,12 @@ public class DiskDatabase {
     columnIndexManager = null;
   }
 
-  public List<String[]> getMinMaxRowsWithDistinctDate(String fieldName,
-      String station, String year, String month) {
+  public List<String[]> getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(String fieldName,
+      Map<String, String> queryParams) {
     List<String[]> minMaxRows = new ArrayList<>();
 
-    List<List<Integer>> minMaxPositionList = getMinMaxPositionList(fieldName, station, year, month);
+    List<List<Integer>> minMaxPositionList = getMinMaxPositionListForFieldMatchingQueryParams(
+        fieldName, queryParams);
     List<Integer> minPositionList = minMaxPositionList.get(0);
     List<Integer> maxPositionList = minMaxPositionList.get(1);
 
@@ -141,8 +142,8 @@ public class DiskDatabase {
 
     for (Integer position : minPositionList) {
       String category = "Min " + fieldName;
-      String[] newRow = constructNewRow(position, station, category, timestampColumnRows,
-          columnRows);
+      String[] newRow = constructNewRow(position, queryParams.get("Station"), category,
+          timestampColumnRows, columnRows);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -151,8 +152,8 @@ public class DiskDatabase {
 
     for (Integer position : maxPositionList) {
       String category = "Max " + fieldName;
-      String[] newRow = constructNewRow(position, station, category, timestampColumnRows,
-          columnRows);
+      String[] newRow = constructNewRow(position, queryParams.get("Station"), category,
+          timestampColumnRows, columnRows);
 
       if (checkNewRowIsDifferent(minMaxRows, newRow)) {
         minMaxRows.add(newRow);
@@ -162,9 +163,9 @@ public class DiskDatabase {
     return minMaxRows;
   }
 
-  private List<List<Integer>> getMinMaxPositionList(String fieldName, String station, String year,
-      String month) {
-    List<Integer> positionList = getPositionList(station, year, month);
+  private List<List<Integer>> getMinMaxPositionListForFieldMatchingQueryParams(String fieldName,
+      Map<String, String> queryParams) {
+    List<Integer> positionList = getPositionListMatchingQueryParams(queryParams);
 
     List<Integer> minPositionList = new ArrayList<>();
     List<Integer> maxPositionList = new ArrayList<>();
@@ -211,21 +212,27 @@ public class DiskDatabase {
     return List.of(minPositionList, maxPositionList);
   }
 
-  private List<Integer> getPositionList(String station, String year, String month) {
+  private List<Integer> getPositionListMatchingQueryParams(Map<String, String> queryParams) {
     List<Integer> positionList = new ArrayList<>();
 
-    String stationIndexFilePath = DISK_INDEX_STORAGE_PATH + "/station/" + station + ".txt";
-    String yearIndexFilePath = DISK_INDEX_STORAGE_PATH + "/year/" + year + ".txt";
-    String monthIndexFilePath = DISK_INDEX_STORAGE_PATH + "/month/" + month + ".txt";
+    String stationIndexFilePath =
+        DISK_INDEX_STORAGE_PATH + "/station/" + queryParams.get("Station") + ".txt";
+    String yearIndexFilePath =
+        DISK_INDEX_STORAGE_PATH + "/year/" + queryParams.get("Year") + ".txt";
+    String monthIndexFilePath =
+        DISK_INDEX_STORAGE_PATH + "/month/" + queryParams.get("Month") + ".txt";
 
     BitSet stationBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(stationIndexFilePath));
     BitSet yearBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(yearIndexFilePath));
     BitSet monthBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(monthIndexFilePath));
 
+    // The following computes the bitwise AND between the bitmaps retrieved to obtain bitmap
+    // representing rows satisfying all query parameters
     BitSet resultBitmap = (BitSet) stationBitmap.clone();
     resultBitmap.and(yearBitmap);
     resultBitmap.and(monthBitmap);
 
+    // To iterate over the true bits in a BitSet, use the following loop
     for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
       positionList.add(i);
     }
