@@ -1,4 +1,4 @@
-package com.ntu.bdm;
+package com.ntu.bdm.manager;
 
 import com.ntu.bdm.index.CategoricalColumnIndex;
 import com.ntu.bdm.vector.CategoricalColumnVector;
