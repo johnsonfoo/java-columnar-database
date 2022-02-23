@@ -4,13 +4,32 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-public class ColumnVector<T>{
+/********************************************************
+ * ColumnVector is a container class which represents a
+ * column of type T. T can be Integer, String, Double,
+ * Boolean etc.
+ *
+ * ColumnVector stores data and metadata for a column.
+ *
+ * Data includes actual values from column. Data is
+ * stored in a data vector which is an array list that
+ * stores elements.
+ *
+ * Metadata includes number of elements, number of null
+ * elements as well a validity vector. Validity vector is
+ * a bitmap and tracks index of null elements.
+ *
+ ********************************************************/
+public class ColumnVector<T> {
 
   private int valueCount;
   private int nullCount;
   private BitSet validityVector;
   private List<T> dataVector;
 
+  /**
+   * Instantiates a new ColumnVector.
+   */
   public ColumnVector() {
     valueCount = 0;
     nullCount = 0;
@@ -19,16 +38,16 @@ public class ColumnVector<T>{
   }
 
   /**
-   * Gets the number of values.
+   * Gets the number of elements in the data vector.
    *
-   * @return number of values in the vector
+   * @return number of elements
    */
   public int getValueCount() {
     return valueCount;
   }
 
   /**
-   * Returns number of null elements in the vector.
+   * Returns number of null elements in the data vector.
    *
    * @return number of null elements
    */
@@ -47,7 +66,7 @@ public class ColumnVector<T>{
   }
 
   /**
-   * Check whether an element in the vector is null.
+   * Check whether an element in the data vector is null.
    *
    * @param index index to check for null
    * @return true if element is null
@@ -59,7 +78,7 @@ public class ColumnVector<T>{
   /**
    * Gets the validity vector.
    *
-   * @return vector of bits tracking which elements in the vector are null
+   * @return bitmap tracking which elements in the data vector are null
    */
   public BitSet getValidityVector() {
     return validityVector;
@@ -75,10 +94,12 @@ public class ColumnVector<T>{
   }
 
   /**
-   * Insert value into the data vector and increment number of values in vector.
+   * Insert value into the data vector and increment number of elements in data vector.
    * <p>
    * If value is not null, flip bit representing index of value in data vector to 1 in validity
-   * vector. Else, increment number of null elements in vector.
+   * vector. Else, increment number of null elements in data vector.
+   *
+   * @param value the value
    */
   public void add(T value) {
     if (value != null) {
