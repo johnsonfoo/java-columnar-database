@@ -9,11 +9,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+/********************************************************
+ * CSVFileUtil is utility class which contains just
+ * static methods and cannot be instantiated. It provides
+ * methods to read data from CSV files and write data to
+ * CSV files.
+ *
+ ********************************************************/
 public class CSVFileUtil {
 
   private CSVFileUtil() {
   }
 
+  /**
+   * Read data from CSV at once into list. Each row in CSV is an element in list.
+   *
+   * @param filePath the file path
+   * @return the list
+   */
   public static List<String[]> readDataAtOnce(String filePath) {
 
     // first create file object for file placed at location
@@ -41,6 +54,12 @@ public class CSVFileUtil {
     return data;
   }
 
+  /**
+   * Write data line by line to CSV. The data will be a new row in CSV.
+   *
+   * @param filePath the file path
+   * @param data     the data
+   */
   public static void writeDataLineByLine(String filePath, String[] data) {
 
     // first create file object for file placed at location
@@ -67,6 +86,12 @@ public class CSVFileUtil {
     }
   }
 
+  /**
+   * Write data from list at once to CSV. Each element in list will be a new row in CSV.
+   *
+   * @param filePath the file path
+   * @param data     the data
+   */
   public static void writeDataAtOnce(String filePath, List<String[]> data) {
 
     // first create file object for file placed at location
@@ -93,6 +118,12 @@ public class CSVFileUtil {
     }
   }
 
+  /**
+   * Write header to CSV.
+   *
+   * @param filePath the file path
+   * @param data     the data
+   */
   public static void writeHeader(String filePath, String[] data) {
     // first create file object for file placed at location
     // specified by filepath
