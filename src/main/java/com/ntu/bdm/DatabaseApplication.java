@@ -14,7 +14,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class ColumnarDatabaseApplication {
+public class DatabaseApplication {
 
   public static Boolean DISK_STORAGE = false;
   public static String MATRICULATION_NUMBER;
