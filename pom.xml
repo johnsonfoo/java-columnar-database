@@ -59,7 +59,7 @@
                   implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer
                   implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.ntu.bdm.ColumnarDatabaseApplication</mainClass>
+                  <mainClass>com.ntu.bdm.DatabaseApplication</mainClass>
                   <manifestEntries>
                     <Class-Path>..</Class-Path>
                   </manifestEntries>
@@ -84,7 +84,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <!-- add path from source root to main class here -->
-              <mainClass>com.ntu.bdm.ColumnarDatabaseApplication</mainClass>
+              <mainClass>com.ntu.bdm.DatabaseApplication</mainClass>
             </manifest>
           </archive>
         </configuration>
