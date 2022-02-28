@@ -11,6 +11,15 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 
+/********************************************************
+ * DiskDatabase is an application class. It manages the
+ * data in the disk in a column-oriented manner.
+ *
+ * It first processes the input CSV file into multiple
+ * column store CSV files and index txt files in the disk.
+ * It then uses the index files to perform search queries.
+ *
+ ********************************************************/
 public class DiskDatabase {
 
   public static final String EMPTY_DATA_SYMBOL = "M";
@@ -20,11 +29,17 @@ public class DiskDatabase {
   private ColumnVectorManager columnVectorManager;
   private ColumnIndexManager columnIndexManager;
 
+  /**
+   * Instantiates a new DiskDatabase.
+   */
   public DiskDatabase() {
     columnVectorManager = new ColumnVectorManager();
     columnIndexManager = new ColumnIndexManager();
   }
 
+  /**
+   * Initialise ColumnVectors and CategoricalColumnVectors.
+   */
   public void initialiseColumnVectors() {
     columnVectorManager.createStringColumnVector("Timestamp");
     columnVectorManager.createCategoricalColumnVector("Station");
@@ -34,6 +49,11 @@ public class DiskDatabase {
     columnVectorManager.createCategoricalColumnVector("Month");
   }
 
+  /**
+   * Populate ColumnVectors and CategoricalColumnVectors with data from input CSV rows.
+   *
+   * @param csvRows the csv rows
+   */
   public void populateColumnVectors(List<String[]> csvRows) {
     for (String[] csvRow : csvRows) {
       String timestamp = csvRow[1];
@@ -60,11 +80,17 @@ public class DiskDatabase {
     }
   }
 
+  /**
+   * Create CategoricalColumnIndexes.
+   */
   public void createCategoricalColumnIndexes() {
     columnIndexManager.constructCategoricalColumnIndexes(
         columnVectorManager.getCategoricalColumnVectors());
   }
 
+  /**
+   * Write ColumnVectors to disk as CSV files.
+   */
   public void writeColumnVectorsToDisk() {
     String timestampColumnFilePath = DISK_COLUMN_STORAGE_PATH + "Timestamp.csv";
     String[] timestampColumnFileHeader = new String[]{"id", "Timestamp"};
@@ -90,6 +116,9 @@ public class DiskDatabase {
             EMPTY_DATA_SYMBOL));
   }
 
+  /**
+   * Write CategoricalColumnIndexes to disk as txt files.
+   */
   public void writeCategoricalColumnIndexesToDisk() {
     Map<String, byte[]> serialisedYear = columnIndexManager.serialiseCategoricalColumnIndex(
         "Year");
@@ -119,14 +148,30 @@ public class DiskDatabase {
     }
   }
 
+  /**
+   * Close connection to ColumnVectorManager.
+   */
   public void clearColumnVectorManagerContents() {
     columnVectorManager = null;
   }
 
+  /**
+   * Close connection to ColumnIndexManager.
+   */
   public void clearColumnIndexManagerContents() {
     columnIndexManager = null;
   }
 
+  /**
+   * Gets list of string array. Each element in list represents an output CSV row. The list of
+   * string array contain minimum and maximum values of column with the fieldName. The minimum and
+   * maximum values are searched from input CSV rows that satisfy the year, month and station
+   * conditions inside queryParams.
+   *
+   * @param fieldName   the field name
+   * @param queryParams the query params
+   * @return the min max rows with distinct date for field matching query params
+   */
   public List<String[]> getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(String fieldName,
       Map<String, String> queryParams) {
     List<String[]> minMaxRows = new ArrayList<>();
@@ -165,6 +210,10 @@ public class DiskDatabase {
     return minMaxRows;
   }
 
+  /*
+   * Gets a list of minimum and maximum indexes for column with the fieldName. The indexes belong to
+   * the rows that satisfy the year, month and station conditions inside query parameters.
+   */
   private List<List<Integer>> getMinMaxPositionListForFieldMatchingQueryParams(String fieldName,
       Map<String, String> queryParams) {
     List<Integer> positionList = getPositionListMatchingQueryParams(queryParams);
@@ -188,12 +237,21 @@ public class DiskDatabase {
 
       csvRow = csvRows.get(position);
 
+      // Check if current value is null
       if (csvRow[1].equals(EMPTY_DATA_SYMBOL)) {
         continue;
       }
 
       Double current = Double.valueOf(csvRow[1]);
 
+      /*
+       * If current value if less than minimum value encountered so far, set minimum value to
+       * current value, clear list of minimum indexes before adding current value index to list of
+       * minimum indexes.
+       *
+       * Else if current value is equal to minimum value encountered so far, add current value
+       * index to list of minimum indexes.
+       */
       if (current < minimum) {
         minimum = current;
         minPositionList.clear();
@@ -202,6 +260,14 @@ public class DiskDatabase {
         minPositionList.add(position);
       }
 
+      /*
+       * If current value if more than maximum value encountered so far, set maximum value to
+       * current value, clear list of maximum indexes before adding current value index to list of
+       * maximum indexes.
+       *
+       * Else if current value is equal to maximum value encountered so far, add current value
+       * index to list of maximum indexes.
+       */
       if (current > maximum) {
         maximum = current;
         maxPositionList.clear();
@@ -214,6 +280,10 @@ public class DiskDatabase {
     return List.of(minPositionList, maxPositionList);
   }
 
+  /*
+   * Gets list of indexes of rows that satisfy the year, month and station conditions inside query
+   * parameters.
+   */
   private List<Integer> getPositionListMatchingQueryParams(Map<String, String> queryParams) {
     List<Integer> positionList = new ArrayList<>();
 
@@ -228,13 +298,15 @@ public class DiskDatabase {
     BitSet yearBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(yearIndexFilePath));
     BitSet monthBitmap = BitSet.valueOf(FileUtil.readBytesFromFile(monthIndexFilePath));
 
-    // The following computes the bitwise AND between the bitmaps retrieved to obtain bitmap
-    // representing rows satisfying all query parameters
+    /*
+     * The following computes the bitwise AND between the bitmaps retrieved to obtain the bitmap
+     * representing rows satisfying all query parameters
+     */
     BitSet resultBitmap = (BitSet) stationBitmap.clone();
     resultBitmap.and(yearBitmap);
     resultBitmap.and(monthBitmap);
 
-    // To iterate over the true bits in a BitSet, use the following loop
+    // To iterate over the true bits in a bitmap, use the following loop
     for (int i = resultBitmap.nextSetBit(0); i >= 0; i = resultBitmap.nextSetBit(i + 1)) {
       positionList.add(i);
     }
@@ -242,6 +314,9 @@ public class DiskDatabase {
     return positionList;
   }
 
+  /*
+   * Gets a string array which represents an output CSV row.
+   */
   private String[] constructNewRow(Integer position, String station, String category,
       List<String[]> timestampColumnRows, List<String[]> columnRows) {
     String date = TimestampUtil.parseAndGetDate(timestampColumnRows.get(position)[1]);
@@ -249,6 +324,10 @@ public class DiskDatabase {
     return new String[]{date, station, category, fieldValue};
   }
 
+  /*
+   * Checks if the string array which represents an output CSV row is not present in minMaxRows.
+   * Returns true if it is not present, false if present.
+   */
   private boolean checkNewRowIsDifferent(List<String[]> minMaxRows, String[] newRow) {
     int currentSize = minMaxRows.size();
     return currentSize <= 0 || !Arrays.equals(newRow, minMaxRows.get(currentSize - 1));
