@@ -14,6 +14,22 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+/********************************************************
+ * DatabaseApplication is the main class. It will start
+ * either the MainMemoryDatabase or DiskDatabase depending
+ * on the user's input.
+ *
+ * It will query for two years and one location from the
+ * database. The last digit of the required years equals
+ * to the last digit of the provided matriculation number.
+ * The location depends on the second last digit of the
+ * provided matriculation number, with even number for
+ * Changi and odd number for Paya Lebar.
+ *
+ * The database will output the query results to an output
+ * CSV file.
+ *
+ ********************************************************/
 public class DatabaseApplication {
 
   public static Boolean DISK_STORAGE = false;
@@ -27,6 +43,11 @@ public class DatabaseApplication {
   public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
 
+  /**
+   * The entry point of application.
+   *
+   * @param args the input arguments
+   */
   public static void main(String[] args) {
     readCommandLineParameters(args);
     initialiseStationAndYearsAndMonths();
@@ -46,10 +67,18 @@ public class DatabaseApplication {
           queryParams.put("Year", year);
           queryParams.put("Month", month);
 
+          /*
+           * Write minimum maximum temperature result rows to output CSV file. The result rows
+           * satisfy the station, year and month conditions inside queryParams.
+           */
           CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Temperature", queryParams));
 
+          /*
+           * Write minimum maximum humidity result rows to output CSV file. The result rows
+           * satisfy the station, year and month conditions inside queryParams.
+           */
           CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Humidity", queryParams));
@@ -74,10 +103,18 @@ public class DatabaseApplication {
           queryParams.put("Year", year);
           queryParams.put("Month", month);
 
+          /*
+           * Write minimum maximum temperature result rows to output CSV file. The result rows
+           * satisfy the station, year and month conditions inside queryParams.
+           */
           CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Temperature",
                   queryParams));
 
+          /*
+           * Write minimum maximum humidity result rows to output CSV file. The result rows
+           * satisfy the station, year and month conditions inside queryParams.
+           */
           CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Humidity",
                   queryParams));
@@ -86,12 +123,19 @@ public class DatabaseApplication {
     }
   }
 
+  /**
+   * Read command line parameters.
+   *
+   * @param args the args
+   */
   public static void readCommandLineParameters(String[] args) {
-    // define options
+    // Define options
     Options options = new Options();
 
+    // Option for using DiskDatabase
     options.addOption("d", "disk", false, "Uses disk storage");
 
+    // Option for matriculation number
     Option config = Option.builder("m")
         .longOpt("matric")
         .hasArg()
@@ -99,7 +143,7 @@ public class DatabaseApplication {
         .desc("Sets the matriculation number").build();
     options.addOption(config);
 
-    // define parser
+    // Define parser
     CommandLine cmd;
     CommandLineParser parser = new DefaultParser();
     HelpFormatter helper = new HelpFormatter();
@@ -122,6 +166,9 @@ public class DatabaseApplication {
     }
   }
 
+  /**
+   * Initialise STATION, YEARS and MONTHS constants.
+   */
   public static void initialiseStationAndYearsAndMonths() {
     String matriculationNumber = MATRICULATION_NUMBER;
     int length = matriculationNumber.length();
