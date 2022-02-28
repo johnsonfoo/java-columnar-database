@@ -92,14 +92,18 @@ public class ColumnIndexManager {
       String category = entry.getValue();
       BitSet bitmap = getBitmapForFieldWithCategory(fieldName, category);
 
-      // Check if there exists a bitmap corresponding to category from CategoricalColumnIndex with
-      // the fieldName
+      /*
+       * Check if there exists a bitmap corresponding to category from CategoricalColumnIndex with
+       * the fieldName
+       */
       if (bitmap == null) {
         return positionList;
       }
 
-      // The following computes the bitwise AND between the bitmaps retrieved to obtain the bitmap
-      // representing rows satisfying all query parameters
+      /*
+       * The following computes the bitwise AND between the bitmaps retrieved to obtain the bitmap
+       * representing rows satisfying all query parameters
+       */
       if (resultBitmap == null) {
         resultBitmap = (BitSet) bitmap.clone();
       } else {

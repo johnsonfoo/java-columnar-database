@@ -95,7 +95,7 @@ public class ColumnVector<T> {
 
   /**
    * Insert value into the data vector and increment number of elements in data vector.
-   * <p>
+   *
    * If value is not null, flip bit representing index of value in data vector to 1 in validity
    * vector. Else, increment number of null elements in data vector.
    *

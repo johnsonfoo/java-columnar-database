@@ -28,25 +28,23 @@ public class CSVFileUtil {
    * @return the list
    */
   public static List<String[]> readDataAtOnce(String filePath) {
-
-    // first create file object for file placed at location
-    // specified by filepath
+    // First create file object for file placed at location specified by filepath
     File file = new File(filePath);
 
     List<String[]> data = null;
     try {
-      // create FileWriter object with file as parameter
+      // Create FileWriter object with file as parameter
       FileReader inputFile = new FileReader(file);
 
-      // create csvReader object and skip first Line
+      // Create csvReader object and skip first Line
       CSVReader reader = new CSVReaderBuilder(inputFile)
           .withSkipLines(1)
           .build();
 
-      // read data from csv
+      // Read data from csv
       data = reader.readAll();
 
-      // closing reader connection
+      // Closing reader connection
       reader.close();
     } catch (Exception e) {
       e.printStackTrace();
@@ -61,25 +59,23 @@ public class CSVFileUtil {
    * @param data     the data
    */
   public static void writeDataLineByLine(String filePath, String[] data) {
-
-    // first create file object for file placed at location
-    // specified by filepath
+    // First create file object for file placed at location specified by filepath
     File file = new File(filePath);
 
     try {
-      // create FileWriter object with file as parameter
+      // Create FileWriter object with file as parameter
       FileWriter outputFile = new FileWriter(file, true);
 
-      // create CSVWriter with ',' as separator
+      // Create CSVWriter with ',' as separator
       CSVWriter writer = new CSVWriter(outputFile, ',',
           CSVWriter.NO_QUOTE_CHARACTER,
           CSVWriter.DEFAULT_ESCAPE_CHARACTER,
           CSVWriter.DEFAULT_LINE_END);
 
-      // add data to csv
+      // Add data to csv
       writer.writeNext(data);
 
-      // closing writer connection
+      // Closing writer connection
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
@@ -93,25 +89,23 @@ public class CSVFileUtil {
    * @param data     the data
    */
   public static void writeDataAtOnce(String filePath, List<String[]> data) {
-
-    // first create file object for file placed at location
-    // specified by filepath
+    // First create file object for file placed at location specified by filepath
     File file = new File(filePath);
 
     try {
-      // create FileWriter object with file as parameter
+      // Create FileWriter object with file as parameter
       FileWriter outputFile = new FileWriter(file, true);
 
-      // create CSVWriter with ',' as separator
+      // Create CSVWriter with ',' as separator
       CSVWriter writer = new CSVWriter(outputFile, ',',
           CSVWriter.NO_QUOTE_CHARACTER,
           CSVWriter.DEFAULT_ESCAPE_CHARACTER,
           CSVWriter.DEFAULT_LINE_END);
 
-      // add data to csv
+      // Add data to csv
       writer.writeAll(data);
 
-      // closing writer connection
+      // Closing writer connection
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();
@@ -125,24 +119,23 @@ public class CSVFileUtil {
    * @param data     the data
    */
   public static void writeHeader(String filePath, String[] data) {
-    // first create file object for file placed at location
-    // specified by filepath
+    // First create file object for file placed at location specified by filepath
     File file = new File(filePath);
 
     try {
-      // create FileWriter object with file as parameter
+      // Create FileWriter object with file as parameter
       FileWriter outputFile = new FileWriter(file);
 
-      // create CSVWriter with ',' as separator
+      // Create CSVWriter with ',' as separator
       CSVWriter writer = new CSVWriter(outputFile, ',',
           CSVWriter.NO_QUOTE_CHARACTER,
           CSVWriter.DEFAULT_ESCAPE_CHARACTER,
           CSVWriter.DEFAULT_LINE_END);
 
-      // add data to csv
+      // Add data to csv
       writer.writeNext(data);
 
-      // closing writer connection
+      // Closing writer connection
       writer.close();
     } catch (IOException e) {
       e.printStackTrace();

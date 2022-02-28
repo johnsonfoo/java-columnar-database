@@ -133,12 +133,14 @@ public class ColumnVectorManager {
 
       Double current = dataVector.get(position);
 
-      // If current value if less than minimum value encountered so far, set minimum value to
-      // current value, clear list of minimum indexes before adding current value index to list of
-      // minimum indexes.
-      //
-      // Else if current value is equal to minimum value encountered so far, add current value
-      // index to list of minimum indexes.
+      /*
+       * If current value if less than minimum value encountered so far, set minimum value to
+       * current value, clear list of minimum indexes before adding current value index to list of
+       * minimum indexes.
+       *
+       * Else if current value is equal to minimum value encountered so far, add current value
+       * index to list of minimum indexes.
+       */
       if (current < minimum) {
         minimum = current;
         minPositionList.clear();
@@ -147,12 +149,14 @@ public class ColumnVectorManager {
         minPositionList.add(position);
       }
 
-      // If current value if more than maximum value encountered so far, set maximum value to
-      // current value, clear list of maximum indexes before adding current value index to list of
-      // maximum indexes.
-      //
-      // Else if current value is equal to maximum value encountered so far, add current value
-      // index to list of maximum indexes.
+      /*
+       * If current value if more than maximum value encountered so far, set maximum value to
+       * current value, clear list of maximum indexes before adding current value index to list of
+       * maximum indexes.
+       *
+       * Else if current value is equal to maximum value encountered so far, add current value
+       * index to list of maximum indexes.
+       */
       if (current > maximum) {
         maximum = current;
         maxPositionList.clear();

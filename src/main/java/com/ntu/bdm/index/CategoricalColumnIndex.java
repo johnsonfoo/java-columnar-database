@@ -36,9 +36,11 @@ public class CategoricalColumnIndex<T> {
       bitmapIndex.put(categories, new BitSet());
     }
 
-    // Iterate over the elements in categoricalColumnVector and flip bit representing index of
-    // element in bitmap to true. The bitmap modified is the one that corresponds to category of
-    // element.
+    /*
+     * Iterate over the elements in categoricalColumnVector and flip bit representing index of
+     * element in bitmap to true.The bitmap modified is the one that corresponds to category of
+     * element.
+     */
     for (int i = 0; i < categoricalColumnVector.getValueCount(); i++) {
       if (categoricalColumnVector.isNull(i)) {
         continue;
