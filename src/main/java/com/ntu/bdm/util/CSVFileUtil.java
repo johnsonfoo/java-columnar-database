@@ -53,36 +53,6 @@ public class CSVFileUtil {
   }
 
   /**
-   * Write data line by line to CSV. The data will be a new row in CSV.
-   *
-   * @param filePath the file path
-   * @param data     the data
-   */
-  public static void writeDataLineByLine(String filePath, String[] data) {
-    // First create file object for file placed at location specified by filepath
-    File file = new File(filePath);
-
-    try {
-      // Create FileWriter object with file as parameter
-      FileWriter outputFile = new FileWriter(file, true);
-
-      // Create CSVWriter with ',' as separator
-      CSVWriter writer = new CSVWriter(outputFile, ',',
-          CSVWriter.NO_QUOTE_CHARACTER,
-          CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-          CSVWriter.DEFAULT_LINE_END);
-
-      // Add data to csv
-      writer.writeNext(data);
-
-      // Closing writer connection
-      writer.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /**
    * Write data from list at once to CSV. Each element in list will be a new row in CSV.
    *
    * @param filePath the file path
