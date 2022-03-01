@@ -32,15 +32,15 @@ import org.apache.commons.cli.ParseException;
  ********************************************************/
 public class DatabaseApplication {
 
-  public static Boolean DISK_STORAGE = false;
-  public static String MATRICULATION_NUMBER;
-  public static String STATION;
-  public static String[] YEARS;
-  public static String[] MONTHS;
-  public static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
-  public static final String MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH = "ScanResultMainMemory.csv";
-  public static final String DISK_DATABASE_OUTPUT_FILE_PATH = "ScanResultDisk.csv";
-  public static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
+  private static Boolean DISK_STORAGE = false;
+  private static String MATRICULATION_NUMBER;
+  private static String STATION;
+  private static String[] YEARS;
+  private static String[] MONTHS;
+  private static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
+  private static final String MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH = "ScanResultMainMemory.csv";
+  private static final String DISK_DATABASE_OUTPUT_FILE_PATH = "ScanResultDisk.csv";
+  private static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
 
   /**
