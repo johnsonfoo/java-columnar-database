@@ -57,15 +57,6 @@ public class ColumnIndexManager {
   }
 
   /**
-   * Gets the CategoricalColumnIndex map.
-   *
-   * @return the categorical column indexes
-   */
-  public Map<String, CategoricalColumnIndex<String>> getCategoricalColumnIndexes() {
-    return categoricalColumnIndexes;
-  }
-
-  /**
    * Gets bitmap corresponding to category from CategoricalColumnIndex with the fieldName.
    *
    * @param fieldName the field name
