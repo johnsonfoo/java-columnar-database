@@ -151,14 +151,14 @@ public class DiskDatabase {
   /**
    * Close connection to ColumnVectorManager.
    */
-  public void clearColumnVectorManagerContents() {
+  public void closeColumnVectorManager() {
     columnVectorManager = null;
   }
 
   /**
    * Close connection to ColumnIndexManager.
    */
-  public void clearColumnIndexManagerContents() {
+  public void closeColumnIndexManager() {
     columnIndexManager = null;
   }
 
