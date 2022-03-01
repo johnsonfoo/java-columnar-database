@@ -91,8 +91,8 @@ public class DatabaseApplication {
       diskDatabase.createCategoricalColumnIndexes();
       diskDatabase.writeColumnVectorsToDisk();
       diskDatabase.writeCategoricalColumnIndexesToDisk();
-      diskDatabase.clearColumnVectorManagerContents();
-      diskDatabase.clearColumnIndexManagerContents();
+      diskDatabase.closeColumnVectorManager();
+      diskDatabase.closeColumnIndexManager();
 
       CSVFileUtil.writeHeader(DISK_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
