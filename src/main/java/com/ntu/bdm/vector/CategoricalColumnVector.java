@@ -1,6 +1,7 @@
 package com.ntu.bdm.vector;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /********************************************************
  * CategoricalColumnVector is a container class that is
@@ -15,7 +16,7 @@ import java.util.HashSet;
  ********************************************************/
 public class CategoricalColumnVector<T> extends ColumnVector<T> {
 
-  private HashSet<T> categories;
+  private Set<T> categories;
 
   /**
    * Instantiates a new CategoricalColumnVector.
@@ -30,7 +31,7 @@ public class CategoricalColumnVector<T> extends ColumnVector<T> {
    *
    * @return the categories
    */
-  public HashSet<T> getCategories() {
+  public Set<T> getCategories() {
     return categories;
   }
 
