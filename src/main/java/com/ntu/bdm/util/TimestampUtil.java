@@ -18,7 +18,7 @@ public class TimestampUtil {
   /**
    * The constant formatTimeStamp holds pattern for timestamp string.
    */
-  public static final DateTimeFormatter formatTimeStamp = DateTimeFormatter.ofPattern(
+  private static final DateTimeFormatter formatTimeStamp = DateTimeFormatter.ofPattern(
       "yyyy-MM-dd HH:mm");
 
   /**

@@ -16,7 +16,7 @@ import java.util.Map;
  ********************************************************/
 public class MainMemoryDatabase {
 
-  public static final String EMPTY_DATA_SYMBOL = "M";
+  private static final String EMPTY_DATA_SYMBOL = "M";
 
   private ColumnVectorManager columnVectorManager;
   private ColumnIndexManager columnIndexManager;

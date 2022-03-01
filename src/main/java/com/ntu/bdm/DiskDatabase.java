@@ -22,9 +22,9 @@ import java.util.Map;
  ********************************************************/
 public class DiskDatabase {
 
-  public static final String EMPTY_DATA_SYMBOL = "M";
-  public static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
-  public static final String DISK_INDEX_STORAGE_PATH = "disk/index/";
+  private static final String EMPTY_DATA_SYMBOL = "M";
+  private static final String DISK_COLUMN_STORAGE_PATH = "disk/column/";
+  private static final String DISK_INDEX_STORAGE_PATH = "disk/index/";
 
   private ColumnVectorManager columnVectorManager;
   private ColumnIndexManager columnIndexManager;
