@@ -53,6 +53,7 @@ public class DatabaseApplication {
     initialiseStationAndYearsAndMonths();
 
     if (!DISK_STORAGE) {
+      System.out.println("Using main memory storage for application");
       MainMemoryDatabase mainMemoryDatabase = new MainMemoryDatabase();
       mainMemoryDatabase.initialiseColumnVectors();
       mainMemoryDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
@@ -61,6 +62,9 @@ public class DatabaseApplication {
       CSVFileUtil.writeHeader(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
       for (String year : YEARS) {
+        System.out.println(
+            "Started scanning Station " + STATION + " for Year " + year);
+
         for (String month : MONTHS) {
           Map<String, String> queryParams = new HashMap<>();
           queryParams.put("Station", STATION);
@@ -83,8 +87,10 @@ public class DatabaseApplication {
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Humidity", queryParams));
         }
+        System.out.println("Finished");
       }
     } else {
+      System.out.println("Using disk storage for application");
       DiskDatabase diskDatabase = new DiskDatabase();
       diskDatabase.initialiseColumnVectors();
       diskDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
@@ -97,6 +103,9 @@ public class DatabaseApplication {
       CSVFileUtil.writeHeader(DISK_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
       for (String year : YEARS) {
+        System.out.println(
+            "Started scanning Station " + STATION + " for Year " + year);
+
         for (String month : MONTHS) {
           Map<String, String> queryParams = new HashMap<>();
           queryParams.put("Station", STATION);
@@ -119,8 +128,10 @@ public class DatabaseApplication {
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Humidity",
                   queryParams));
         }
+        System.out.println("Finished");
       }
     }
+    System.out.println("Scanning completed and scan results successfully written to disk");
   }
 
   /**
@@ -153,6 +164,8 @@ public class DatabaseApplication {
       if (cmd.hasOption("d")) {
         System.out.println("Disk storage set to true");
         DISK_STORAGE = true;
+      } else {
+        System.out.println("Main memory storage set to true");
       }
       if (cmd.hasOption("m")) {
         String opt_config = cmd.getOptionValue("m");
