@@ -23,8 +23,8 @@ java -jar target/java-columnar-database-1.0-SNAPSHOT.jar -m <enter matriculation
 java -jar target/java-columnar-database-1.0-SNAPSHOT.jar -m <enter matriculation number> -d
 ```
 
-6. The application will create a new output CSV file `ScanResultMainMemory.csv` after running step 4
-   and `ScanResultDisk.csv` after running step 5. Both output CSV files are identical.
+6. The application will create a new output CSV file `ScanResult.csv` after running step 4 or
+   running step 5.
 
 7. Javadoc for the application can be viewed by running the following command:
 

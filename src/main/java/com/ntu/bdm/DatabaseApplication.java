@@ -38,8 +38,7 @@ public class DatabaseApplication {
   private static String[] YEARS;
   private static String[] MONTHS;
   private static final String INPUT_FILE_PATH = "SingaporeWeather.csv";
-  private static final String MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH = "ScanResultMainMemory.csv";
-  private static final String DISK_DATABASE_OUTPUT_FILE_PATH = "ScanResultDisk.csv";
+  private static final String OUTPUT_FILE_PATH = "ScanResult.csv";
   private static final String[] OUTPUT_FILE_HEADER = new String[]{"Date", "Station", "Category",
       "Value"};
 
@@ -59,7 +58,7 @@ public class DatabaseApplication {
       mainMemoryDatabase.populateColumnVectors(CSVFileUtil.readDataAtOnce(INPUT_FILE_PATH));
       mainMemoryDatabase.createCategoricalColumnIndexes();
 
-      CSVFileUtil.writeHeader(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
+      CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
       for (String year : YEARS) {
         System.out.println(
@@ -75,7 +74,7 @@ public class DatabaseApplication {
            * Write minimum maximum temperature result rows to output CSV file. The result rows
            * satisfy the station, year and month conditions inside queryParams.
            */
-          CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Temperature", queryParams));
 
@@ -83,7 +82,7 @@ public class DatabaseApplication {
            * Write minimum maximum humidity result rows to output CSV file. The result rows
            * satisfy the station, year and month conditions inside queryParams.
            */
-          CSVFileUtil.writeDataAtOnce(MAIN_MEMORY_DATABASE_OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
               mainMemoryDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams(
                   "Humidity", queryParams));
         }
@@ -100,7 +99,7 @@ public class DatabaseApplication {
       diskDatabase.closeColumnVectorManager();
       diskDatabase.closeColumnIndexManager();
 
-      CSVFileUtil.writeHeader(DISK_DATABASE_OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
+      CSVFileUtil.writeHeader(OUTPUT_FILE_PATH, OUTPUT_FILE_HEADER);
 
       for (String year : YEARS) {
         System.out.println(
@@ -116,7 +115,7 @@ public class DatabaseApplication {
            * Write minimum maximum temperature result rows to output CSV file. The result rows
            * satisfy the station, year and month conditions inside queryParams.
            */
-          CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Temperature",
                   queryParams));
 
@@ -124,7 +123,7 @@ public class DatabaseApplication {
            * Write minimum maximum humidity result rows to output CSV file. The result rows
            * satisfy the station, year and month conditions inside queryParams.
            */
-          CSVFileUtil.writeDataAtOnce(DISK_DATABASE_OUTPUT_FILE_PATH,
+          CSVFileUtil.writeDataAtOnce(OUTPUT_FILE_PATH,
               diskDatabase.getMinMaxRowsWithDistinctDateForFieldMatchingQueryParams("Humidity",
                   queryParams));
         }
